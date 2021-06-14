@@ -1,0 +1,76 @@
+Arguments: 
+  /usr/bin/node /usr/bin/yarn add bootstrap
+
+PATH: 
+  /home/bibek/.pyenv/shims:/home/bibek/.nix-profile/bin:/home/bibek/.serverless/bin:/home/bibek/.pyenv/bin:/home/bibek/.local/bin:/home/bibek/.pyenv/shims:/home/bibek/.nix-profile/bin:/home/bibek/.serverless/bin:/home/bibek/.pyenv/bin:/home/bibek/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/opt/android-sdk/emulator:/opt/android-sdk/tools:/opt/android-sdk/tools/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/bibek/practices/shell/bin/:/home/bibek/.local/bin:/home/bibek/custom_bins/:/home/bibek/.yarn/bin/:/usr/bin/:/home/bibek/.gem/ruby/2.5.0/bin:/home/bibek/.fzf/bin:/home/bibek/practices/shell/bin/:/home/bibek/.local/bin:/home/bibek/custom_bins/:/home/bibek/.yarn/bin/:/usr/bin/:/home/bibek/.gem/ruby/2.5.0/bin
+
+Yarn version: 
+  1.7.0
+
+Node version: 
+  16.3.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  TypeError: Reduce of empty array with no initial value
+      at Array.reduce (<anonymous>)
+      at PackageLinker.<anonymous> (/usr/lib/node_modules/yarn/lib/cli.js:50461:43)
+      at Generator.next (<anonymous>)
+      at step (/usr/lib/node_modules/yarn/lib/cli.js:98:30)
+      at /usr/lib/node_modules/yarn/lib/cli.js:109:13
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+npm manifest: 
+  {
+    "name": "bs-form-example",
+    "homepage": ".",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+      "start": "node ../node_modules/react-scripts/bin/react-scripts.js start",
+      "build": "node ../node_modules/react-scripts/bin/react-scripts.js build",
+      "test": "node ../node_modules/react-scripts/bin/react-scripts.js test",
+      "eject": "node ../node_modules/react-scripts/bin/react-scripts.js eject"
+    },
+    "dependencies": {
+      "@testing-library/jest-dom": "link:../node_modules/@testing-library/jest-dom",
+      "@testing-library/react": "link:../node_modules/@testing-library/react",
+      "@testing-library/user-event": "link:../node_modules/@testing-library/user-event",
+      "@types/jest": "link:../node_modules/@types/jest",
+      "@types/node": "link:../node_modules/@types/node",
+      "@types/react": "link:../node_modules/@types/react",
+      "@types/react-dom": "link:../node_modules/@types/react-dom",
+      "react": "link:../node_modules/react",
+      "react-dom": "link:../node_modules/react-dom",
+      "react-scripts": "link:../node_modules/react-scripts",
+      "typescript": "link:../node_modules/typescript",
+      "bs-form": "link:.."
+    },
+    "devDependencies": {
+      "@babel/plugin-syntax-object-rest-spread": "^7.8.3"
+    },
+    "eslintConfig": {
+      "extends": "react-app"
+    },
+    "browserslist": {
+      "production": [
+        ">0.2%",
+        "not dead",
+        "not op_mini all"
+      ],
+      "development": [
+        "last 1 chrome version",
+        "last 1 firefox version",
+        "last 1 safari version"
+      ]
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

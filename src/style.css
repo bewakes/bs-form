@@ -1,0 +1,15 @@
+.input-error {
+    margin-left: 0.5rem;
+    color: #dc3545;
+}
+
+@media (max-width: 760px) {
+    .form-group {
+        margin-bottom: 0px;
+    }
+
+    hr {
+        margin-bottom: 0.4rem;
+        margin-top: 0.4rem;
+    }
+}
