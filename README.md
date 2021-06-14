@@ -1,5 +1,17 @@
 # bs-form
 
+  * [Install](#install)
+  * [Features](#features)
+  * [Usage](#usage)
+  * [The API](#the-api)
+    + [Schema](#schema)
+    + [Layout](#layout)
+    + [useForm hook](#useform-hook)
+  * [License](#license)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 A bootstrap form library for react. **You don't need to write a single JSX/Html.**
 
 [![NPM](https://img.shields.io/npm/v/bs-form.svg)](https://www.npmjs.com/package/bs-form) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
@@ -17,22 +29,6 @@ yarn add bs-form
 - [x] Specify form layout as array. This is really awesome!!
 - [x] No need to write a single html/jsx
 - [x] Although it works best(the form layouting) in bootstrap, it can be used with other libraries as well.
-
-## The API
-### Schema
-A schema is an objet whose keys are the fields of the object that we are trying to render form for. The values of schema is an object consisting of the following:
-- `type*`: The type of the input for that field.
-- `label*`: The label of the input.
-- `required`: If the field is required. Will display error message.
-- `displayCondition`: A function returning boolean value. `true` if needs to be displayed and `false` otherwise. The parameters to the function is an object that current form state represents.
-- `validation`: This is a function that returns falsy value if valid, else returns string that will be the error message. The parameters are the current field value, and current form object value. The library also has some predefined validation functions.
-
-### Layout
-A layout defines how the form is rendered. This is basically an array of arrays. Where each element of array represents a row-wise  ordering of form elements. The values are just the names of the fields. Please refer to the example below for the usage.
-
-
-### useForm hook
-This is the core part of the library. The arguments to this hook are the initial values of the form object and the schema. Please refer to the example below for usage details.
 
 ## Usage
 Let's see how a form for User data looks like.
@@ -87,7 +83,7 @@ const layout: B.Layout<User> = [
 
 
 const App: React.FC = () => {
-    const onSubmit = () => { alert('submitted!!');};
+    const onSubmit = (formValues: User) => { alert('submitted!!');};
     const initialValues: User = {} as User;
     const form = useForm(initialValues, schema);
     return (
@@ -116,6 +112,23 @@ Note that, when gender is selected (male or female) the hair length input appear
 
 Now, if gender is male, and hair length is more than 10, as specified in the schema, it also throws an error
 ![image](https://user-images.githubusercontent.com/5417640/121903005-93254f00-cd47-11eb-8a73-655cb7152de7.png)
+
+
+## The API
+### Schema
+A schema is an objet whose keys are the fields of the object that we are trying to render form for. The values of schema is an object consisting of the following:
+- `type*`: The type of the input for that field.
+- `label*`: The label of the input.
+- `required`: If the field is required. Will display error message.
+- `displayCondition`: A function returning boolean value. `true` if needs to be displayed and `false` otherwise. The parameters to the function is an object that current form state represents.
+- `validation`: This is a function that returns falsy value if valid, else returns string that will be the error message. The parameters are the current field value, and current form object value. The library also has some predefined validation functions.
+
+### Layout
+A layout defines how the form is rendered. This is basically an array of arrays. Where each element of array represents a row-wise  ordering of form elements. The values are just the names of the fields. Please refer to the example above for the usage.
+
+
+### useForm hook
+This is the core part of the library. The arguments to this hook are the initial values of the form object and the schema. Please refer to the example above for usage details.
 
 ## License
 
