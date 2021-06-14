@@ -1,4 +1,5 @@
 # bs-form
+A bootstrap form library for react. **You don't need to write a single JSX/Html.**
 
   * [Install](#install)
   * [Features](#features)
@@ -10,9 +11,6 @@
   * [License](#license)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
-
-A bootstrap form library for react. **You don't need to write a single JSX/Html.**
 
 [![NPM](https://img.shields.io/npm/v/bs-form.svg)](https://www.npmjs.com/package/bs-form) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
