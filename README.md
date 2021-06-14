@@ -38,6 +38,7 @@ This is the core part of the library. The arguments to this hook are the initial
 Let's see how a form for User data looks like.
 ```tsx
 import React, { Component } from 'react'
+import { BSForm, validations, BSTypes as B } from 'bs-form';
 import 'bs-form/dist/index.css'
 
 interface User {
