@@ -30,10 +30,15 @@ yarn add bs-form
 
 ## Usage
 Let's see how a form for User data looks like.
+
+**NOTE** the bootstrap import statement in the code snippet.
 ```tsx
 import React, { Component } from 'react'
-import { BSForm, validations, BSTypes as B } from 'bs-form';
-import 'bs-form/dist/index.css'
+import { BSForm, validations, BSTypes as B, useForm } from 'bs-form';
+import 'bs-form/dist/index.css';
+
+// Need to import bootstrap as well, but first yarn add bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface User {
     name: string;
