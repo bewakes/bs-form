@@ -16,6 +16,7 @@ yarn add bs-form
 - [x] Validate/Display/Hide the fields using js functions. This is very powerful!!
 - [x] Specify form layout as array. This is really awesome!!
 - [x] No need to write a single html/jsx
+- [x] Although it works best(the form layouting) in bootstrap, it can be used with other libraries as well.
 
 ## Usage
 Let's see how a form for User data looks like.
@@ -72,7 +73,6 @@ const App: React.FC = () => {
     const onSubmit = () => { alert('submitted!!');};
     const initialValues: User = {} as User;
     const form = useForm(initialValues, schema);
-    console.warn(form.formErrors);
     return (
         <div className="row">
             <div className="col-md-3" />
