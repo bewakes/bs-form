@@ -92,6 +92,13 @@ const App: React.FC = () => {
 };
 
 ```
+Result of the above code after clicking 'Check' is:
+![image](https://user-images.githubusercontent.com/5417640/121902641-3aee4d00-cd47-11eb-8f2e-96b23a3554c2.png)
+Note that, when gender is selected (male or female) the hair length input appears.
+![image](https://user-images.githubusercontent.com/5417640/121902903-7ab53480-cd47-11eb-85b2-5aa36256e361.png)
+
+Now, if gender is male, and hair length is more than 10, as specified in the schema, it also throws an error
+![image](https://user-images.githubusercontent.com/5417640/121903005-93254f00-cd47-11eb-8a73-655cb7152de7.png)
 
 ## License
 
