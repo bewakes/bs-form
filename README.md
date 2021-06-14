@@ -18,6 +18,22 @@ yarn add bs-form
 - [x] No need to write a single html/jsx
 - [x] Although it works best(the form layouting) in bootstrap, it can be used with other libraries as well.
 
+## The API
+### Schema
+A schema is an objet whose keys are the fields of the object that we are trying to render form for. The values of schema is an object consisting of the following:
+- `type*`: The type of the input for that field.
+- `label*`: The label of the input.
+- `required`: If the field is required. Will display error message.
+- `displayCondition`: A function returning boolean value. `true` if needs to be displayed and `false` otherwise. The parameters to the function is an object that current form state represents.
+- `validation`: This is a function that returns falsy value if valid, else returns string that will be the error message. The parameters are the current field value, and current form object value. The library also has some predefined validation functions.
+
+### Layout
+A layout defines how the form is rendered. This is basically an array of arrays. Where each element of array represents a row-wise  ordering of form elements. The values are just the names of the fields. Please refer to the example below for the usage.
+
+
+### useForm hook
+This is the core part of the library. The arguments to this hook are the initial values of the form object and the schema. Please refer to the example below for usage details.
+
 ## Usage
 Let's see how a form for User data looks like.
 ```tsx
