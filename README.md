@@ -11,6 +11,7 @@ A bootstrap form library for react. **You don't need to write a single JSX/Html.
         * [onSubmit](#onsubmit)
         * [formValues](#formvalues)
         * [setFormValues](#setformvalues)
+    + [Validation](#validation)
 * [License](#license)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -173,8 +174,41 @@ render () {
 #### formValues
 At any instant `formValues` contains the latest values for each input.
 
-### setFormValues
+#### setFormValues
 Use this when you want to externally set form values, i.e. when you need control from outside the form.
+
+### Validation
+There are basic validation functions available:
+```typescript
+import { BSTypes as B, validations, validationAnd, validationOr } from 'bs-form';
+
+// The following are the available functions.
+
+const {
+ noEmpty,
+ lessThan,
+ greaterThan,
+ equalTo,
+ lengthEquals,
+ lengthLessThan,
+ lengthGreaterThan,
+} = validations;
+
+const schema: B.Schema<User> = {
+    age: { ..., validation: validations.greaterThan(18) },
+    name: { ..., validation: validationAnd(noEmpty, lengthGreaterThan(3), lengthLessThan(20)) }
+};
+```
+Besides these, you can write your own validation functions and compose them with
+`validationOr` and `validationAnd`.
+
+**Validation Function interface:**:
+```typescript
+const customValidation = (fieldValue: any, allformValues: User) => {
+    // Do your calculations and return falsy if valid otherwise return an string to indicate error.
+    // The returned string will be displayed as form error.
+}
+```
 
 ## License
 
