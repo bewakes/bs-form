@@ -1,7 +1,7 @@
 {
   "name": "bs-form",
-  "version": "1.0.0",
-  "description": "Yet another form library",
+  "version": "1.0.1",
+  "description": "Yet another form library. Focuses on ease of use and flexibility.",
   "author": "bewakes",
   "license": "MIT",
   "repository": "bewakes/bs-form",
@@ -9,7 +9,7 @@
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
   "engines": {
-    "node": ">=10"
+    "node": ">=8"
   },
   "scripts": {
     "build": "microbundle-crl --no-compress --format modern,cjs --css-modules false",

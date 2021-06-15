@@ -5,9 +5,12 @@ A bootstrap form library for react. **You don't need to write a single JSX/Html.
 * [Features](#features)
 * [Usage](#usage)
 * [The API](#the-api)
-+ [Schema](#schema)
-+ [Layout](#layout)
-+ [useForm hook](#useform-hook)
+    + [Schema](#schema)
+    + [Layout](#layout)
+    + [useForm hook](#useform-hook)
+        * [onSubmit](#onsubmit)
+        * [formValues](#formvalues)
+        * [setFormValues](#setformvalues)
 * [License](#license)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
