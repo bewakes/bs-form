@@ -1,14 +1,14 @@
 # bs-form
 A bootstrap form library for react. **You don't need to write a single JSX/Html.**
 
-  * [Install](#install)
-  * [Features](#features)
-  * [Usage](#usage)
-  * [The API](#the-api)
-    + [Schema](#schema)
-    + [Layout](#layout)
-    + [useForm hook](#useform-hook)
-  * [License](#license)
+* [Install](#install)
+* [Features](#features)
+* [Usage](#usage)
+* [The API](#the-api)
++ [Schema](#schema)
++ [Layout](#layout)
++ [useForm hook](#useform-hook)
+* [License](#license)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -131,7 +131,47 @@ A layout defines how the form is rendered. This is basically an array of arrays.
 
 
 ### useForm hook
-This is the core part of the library. The arguments to this hook are the initial values of the form object and the schema. Please refer to the example above for usage details.
+This is the core part of the library. The arguments to this hook are the initial values of the form object and the schema. When not used with `BSForm`, it is used as follows:
+```typescript
+const initialValues: User = {} as User;
+const schema: Schema<User> = {...};
+const form = useForm(initialValues, schema);
+const { setFormValues, onChange, formValues, onSubmit, formErrors } = form;
+
+const onFormSubmit = (data) => {
+    fetch('/my/api/', { method: 'post', body: JSON.Stringify(data) ... })
+        .then(r => r.json())
+        .then(j => { setState(j); ... } );
+}
+
+render () { 
+    return (
+        <form onSubmit={onSubmit(onFormSubmit)}>
+            <div>
+                <label>Name: </label>
+                <small style={{color: 'red'}}>{formErrors['name']}</small>
+                <input type="text" name="name" onChange={onChange('name')} />
+            </div>
+            <div>
+                <label>Age: </label>
+                <small style={{color: 'red'}}>{formErrors['age']}</small>
+                <input type="number" name="age" onChange={onChange('age')} />
+            </div>
+            ...
+
+            <button type="submit">Submit Form</button>
+        </form>
+    );
+}
+```
+#### onSubmit
+`onSubmit` obtained from form hook is a higher order function that takes care of validation for you. Just pass in your callback function(which should take form values as arguments) and obtain a new function to use with `<form>`'s `onSubmit`.
+
+#### formValues
+At any instant `formValues` contains the latest values for each input.
+
+### setFormValues
+Use this when you want to externally set form values, i.e. when you need control from outside the form.
 
 ## License
 
