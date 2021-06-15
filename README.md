@@ -12,6 +12,7 @@ A bootstrap form library for react. **You don't need to write a single JSX/Html.
         * [formValues](#formvalues)
         * [setFormValues](#setformvalues)
     + [Validation](#validation)
+* [Contributing](#contributing)
 * [License](#license)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -209,6 +210,8 @@ const customValidation = (fieldValue: any, allformValues: User) => {
     // The returned string will be displayed as form error.
 }
 ```
+## Contributing
+Contributions are more than welcome. Please create and issue first(describing your targeted change), and then refer that issue in your pull request.
 
 ## License
 
