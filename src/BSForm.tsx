@@ -37,8 +37,6 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
     if(schema.displayCondition && !schema.displayCondition(formValues)) {
         return null;
     }
-    console.warn(name, error);
-
     if (schema.type === "select") {
         return (
             <React.Fragment>
