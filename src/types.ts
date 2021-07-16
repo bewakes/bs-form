@@ -3,7 +3,7 @@ export type ValToVal = (v: any, formvals?: any) => any;
 export type LayoutElement<T> = keyof T | Array<keyof T>;
 export type Layout<T> = Array<LayoutElement<T>>[];
 export type ProcessedLayoutRow<T> = Array<[keyof T, number]>;
-export type NonSelect = "number" | "text" | "date" |  "email" | "password" | "textarea" | "checkbox" | "time" | "label";
+export type NonSelect = "number" | "text" | "date" |  "email" | "password" | "textarea" | "checkbox" | "time" | "label" | "file";
 export type Option = { label: string; value: string | number };
 
 export type InputType = "select" | NonSelect;
@@ -23,6 +23,9 @@ export type SchemaSpec<T> = {
     valueRenderer?: ValToVal;
     valueProcessor?: ValToVal;
     placeholder?: string;
+    allowMultipleFiles?: boolean;
+    allowedFileCount?: number;
+    allowedFileExtensions?: string;
 } & ({
     type: NonSelect; }
   | {

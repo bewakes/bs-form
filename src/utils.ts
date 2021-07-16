@@ -31,6 +31,26 @@ export const validations = {
     lengthEquals: (x: number) => (val: any) => val.toString().length != x ? 'Length should be equal to ' + x : undefined,
     lengthLessThan: (x: number) => (val: any) => val.toString().length >= x ? 'Length should be less than ' + x : undefined,
     lengthGreaterThan: (x: number) => (val: any) => val.toString().length <= x ? 'Length should be greater than ' + x : undefined,
+    
+    // The maximum and minimum size are in KB
+    validateMinFileSize : (min: number) => (value: FileList) => {
+                                                                    for(let i=0; i<value.length; i++){
+                                                                        if(!(value[i].size >= min * 1024)){
+                                                                            return `File size should be greater than ${min}KB`;
+                                                                        }
+                                                                    }
+                                                                    return undefined;
+                                                                },
+
+    validateFileCount: (max: number) => (value: FileList) => value.length <= max ? undefined : `Only selection of max ${max} files are allowed`,
+    validateMaxFileSize: (max: number) => (value: FileList) => {
+                                                                for(let i=0; i<value.length; i++){
+                                                                        if(!(value[i].size <= max * 1024)){
+                                                                            return `File size should not be greater than ${max}KB.`
+                                                                        }
+                                                                    }
+                                                                return undefined;
+                                                            },
 }
 
 export const and = (...dispConds: DisplayCondition<any>[]) => (formValues: any) =>

@@ -53,7 +53,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
     const [formErrors, setFormErrors] = React.useState<Errors<T>>({});
     const [schema, setSchema] = React.useState<Schema<T> | undefined>(_schema);
     const [dirty, setDirty] = React.useState<T>({} as T);
-
+        
     const validateAndSetErrors = () => {
         if (schema) {
             const errs = Object.keys(schema).reduce((acc, key) => {
@@ -122,10 +122,13 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         onChange:
             (name: keyof T, valueProcessor?: (_: any, formVals: any) => any) =>
             (ev: React.FormEvent<HTMLInputElement>) => {
-                const value =
-                    ev.currentTarget.type === 'checkbox'
-                        ? ev.currentTarget.checked
-                        : ev.currentTarget.value;
+                let value: any = ev.currentTarget.value;
+                if(ev.currentTarget.type === "checkbox"){
+                    value = ev.currentTarget.checked;
+                }
+                if(ev.currentTarget.type === "file"){
+                    value = ev.currentTarget.files;
+                }
                 const valProcessor = valueProcessor || ((x) => x);
                 setDirty({ ...dirty, [name]: true });
                 setFormValues({
