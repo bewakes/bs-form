@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
+import { Row, Col, Form as BForm, Input, Label, FormGroup, Button, FormText } from 'reactstrap';
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
 
@@ -30,7 +30,7 @@ interface WrappedInputProps<T> {
 }
 
 function WrappedInput<T> (props: WrappedInputProps<T>) {
-    const { name, schema, value, formValues, error, ...other } = props;
+    const { name, schema, value, formValues, error, onChange, ...other } = props;
     const renderer = schema.valueRenderer || (x => x);
     const renderValue = renderer(value);
 
@@ -49,6 +49,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                     value={renderValue}
                     type="select"
                     invalid={!!error}
+                    onChange={ onChange }
                     {...other}
                 >
                 {
@@ -70,6 +71,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                         type="checkbox"
                         invalid={!!error}
                         checked={renderValue}
+                        onChange={ onChange }
                         {...other}
                     />{' '}
                     {schema.label}{ schema.required && <span className="input-error">*</span> }
@@ -79,6 +81,31 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
     }
     if (schema.type === 'label') {
         return <h5 style={{marginBottom: "-8px", marginTop: "8px"}}>{schema.label}</h5>;
+    }
+    if (schema.type === 'file'){
+        return  ( 
+        <React.Fragment>
+            <Label>
+                { schema.label }
+                <small className="input-error">{error}</small>
+            </Label>
+            <Input 
+                type="file" 
+                name={name as string}  
+                multiple={ schema.allowMultipleFiles === undefined ? true : schema.allowMultipleFiles }
+                accept={ schema.allowedFileExtensions? schema.allowedFileExtensions : "*" } 
+                onChange={ onChange }
+                { ...other } 
+            />
+            {
+                schema.allowedFileCount && 
+                    <FormText color="muted">
+                        { `Please select ${schema.allowedFileCount} files at max.`}
+                    </FormText>
+            }
+           
+        </React.Fragment>
+        );
     }
     return (
         <React.Fragment>
@@ -92,12 +119,12 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             type={schema.type}
             placeholder={schema.placeholder}
             invalid={!!error}
+            onChange={ onChange }
             {...other}
         />
         </React.Fragment>
     );
 };
-
 
 const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) => {
     const {
@@ -117,6 +144,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
     React.useEffect(() => {
         form.setSchema(schema);
     }, []);
+
     const processedLayout = layout.map(row => processRow<FormType>(row, 12));
     const buttons = (
         <React.Fragment>
