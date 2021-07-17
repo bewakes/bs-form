@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Form as BForm, Input, Label, FormGroup, Button, FormText } from 'reactstrap';
+import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
 
@@ -98,10 +98,14 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 { ...other } 
             />
             {
-                schema.allowedFileCount && 
-                    <FormText color="muted">
-                        { `Please select ${schema.allowedFileCount} files at max.`}
-                    </FormText>
+                // schema.allowedFileCount && 
+                //     <FormText color="muted">
+                //         { `Please select ${schema.allowedFileCount} files at max.`}
+                //     </FormText>
+            }
+            {
+                schema.allowMultipleFiles && formValues[name] &&
+                    Object.entries(formValues[name]).map(([key, file]) => <p key={ key }>{ file.name }</p>)
             }
            
         </React.Fragment>
