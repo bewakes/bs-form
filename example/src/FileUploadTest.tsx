@@ -6,6 +6,7 @@ import 'bs-form/dist/index.css';
 
 interface FileUpload{
 	name: string;
+    age: number;
 	fileAttachments: FileList;
 }
 
@@ -18,12 +19,14 @@ const schema: B.Schema<FileUpload> = {
 		allowedFileCount: 2,
         allowedFileExtensions: ".pdf, image/*",
         validation: validationAnd(validations.validateFileCount(2), validations.validateMaxFileSize(500)),
-    }
+    },
+    age: { type:"text", label: "Your age" }
 }
 
 const layout: B.Layout<FileUpload> = [
 	['name'],
-	['fileAttachments']
+    ['age'],
+	['fileAttachments'],
 ];
 
 const FileUploadComponent: React.FC = () => {

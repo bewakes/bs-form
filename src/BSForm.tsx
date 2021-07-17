@@ -84,8 +84,8 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
     }
     if (schema.type === 'file'){
         return  ( 
-        <React.Fragment>
-            <Label>
+        <FormGroup>
+            <Label style={{ display: "block"}}>
                 { schema.label }
                 <small className="input-error">{error}</small>
             </Label>
@@ -108,7 +108,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                     Object.entries(formValues[name]).map(([key, file]) => <p key={ key }>{ file.name }</p>)
             }
            
-        </React.Fragment>
+        </FormGroup>
         );
     }
     return (
