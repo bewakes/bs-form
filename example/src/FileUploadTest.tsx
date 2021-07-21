@@ -7,7 +7,7 @@ import 'bs-form/dist/index.css';
 interface FileUpload{
 	name: string;
     age: number;
-	fileAttachments: FileList;
+	fileAttachments: Array<File>;
 }
 
 const schema: B.Schema<FileUpload> = {
@@ -29,8 +29,30 @@ const layout: B.Layout<FileUpload> = [
 	['fileAttachments'],
 ];
 
+const uploadFile = (fileAttachments: File[]) => {
+    const postBody = new FormData();
+    for(let i=0; i< fileAttachments.length; i++){
+        postBody.append("files", fileAttachments[i]);
+    }
+
+    fetch("http://localhost:8080/dr2client/api/file-upload", {
+            method: 'POST',
+            mode: 'cors',
+            body: postBody,
+            headers: {
+                'Authorization': "eyJsb2dpbmlkIjoidXJtaS5taHJ6QGdtYWlsLmNvbSIsImxhc3RfbmFtZSI6bnVsbCwiZGF0YXNldElkIjoyLCJyb3dzZXROYW1lIjoidXNlcnMiLCJpZCI6IjMiLCJmYW1pbHkiOnsiYWRkcmVzcyI6IkthdGhtYW5kdSIsInJvbGUiOiJPcmdhbml6ZXIiLCJjb2xvciI6bnVsbCwibmFtZSI6Ik1haGFyamFuIiwibG9nbyI6bnVsbCwiYWN0aXZlIjp0cnVlLCJpZCI6IjEiLCJzbG9nYW4iOiJKaGlpIE5ld2EifSwiZmlyc3RfbmFtZSI6IlVybWlsYSBNYWhhcmphbiIsImlzX3ZlcmlmaWVkIjp0cnVlLCJlbWFpbCI6InVybWkubWhyekBnbWFpbC5jb20iLCJvcmdJZCI6MX0=.A616D4721AC88BDF0EFDB83B878AEE01"
+            }
+        }
+    )
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch( err => console.log(err));
+}
+
 const FileUploadComponent: React.FC = () => {
-	const onSubmit = (formValues: FileUpload) => { console.log("formValues", formValues) };
+	const onSubmit = (formValues: FileUpload) => { 
+        uploadFile(formValues.fileAttachments);
+    };
     const initialValues: FileUpload = {} as FileUpload;
     const form = useForm(initialValues, schema);
     console.warn(form.formErrors);

@@ -27,12 +27,22 @@ interface WrappedInputProps<T> {
     value: any;
     formValues: T;
     error?: string;
+    setFormValues: (x: any) => any;
 }
 
 function WrappedInput<T> (props: WrappedInputProps<T>) {
-    const { name, schema, value, formValues, error, onChange, ...other } = props;
+    const { name, schema, value, formValues, error, onChange, setFormValues, ...other } = props;
     const renderer = schema.valueRenderer || (x => x);
     const renderValue = renderer(value);
+
+    const removeFileSelection = (index: number) => {
+        console.log(formValues[name]);
+        const updatedFormValues = formValues[name];
+        console.log(updatedFormValues[index]);
+        (formValues[name] as Array<File>).splice(index, 1);
+        // .splice(index, 1);
+        // setFormValues(updatedFormValues);
+    }
 
     if(schema.displayCondition && !schema.displayCondition(formValues)) {
         return null;
@@ -105,9 +115,14 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             }
             {
                 schema.allowMultipleFiles && formValues[name] &&
-                    Object.entries(formValues[name]).map(([key, file]) => <p key={ key }>{ file.name }</p>)
+                    Object.entries(formValues[name]).map(
+                        ([key, file]) => 
+                            <div key={ key }>
+                                <span>{ file.name }</span>
+                                <span className="remove-file" onClick={ () => removeFileSelection(+key)}>X</span>
+                            </div>
+                    )
             }
-           
         </FormGroup>
         );
     }
@@ -136,7 +151,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         disabled, actions,
         actionName, actionsTop
     } = props;
-    const { formValues, formErrors, onChange, onSubmit } = form;
+    const { formValues, formErrors, onChange, onSubmit, setFormValues } = form;
     // TODO: use formErrors
     type FormType = typeof formValues;
 
@@ -185,6 +200,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                                     value={formValues[fieldName as (keyof FormType)]}
                                     onChange={onChange(fieldName, schema[fieldName as (keyof FormType)].valueProcessor)}
                                     formValues={formValues}
+                                    setFormValues={setFormValues}
                                     error={formErrors[fieldName as (keyof FormType)]}
                                 />
                             </FormGroup>
