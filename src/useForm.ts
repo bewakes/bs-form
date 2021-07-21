@@ -127,7 +127,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
                     value = ev.currentTarget.checked;
                 }
                 if(ev.currentTarget.type === "file"){
-                    value = ev.currentTarget.files;
+                    value = Array.from(ev.currentTarget.files as FileList);
                 }
                 const valProcessor = valueProcessor || ((x) => x);
                 setDirty({ ...dirty, [name]: true });
