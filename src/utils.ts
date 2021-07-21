@@ -33,22 +33,32 @@ export const validations = {
     lengthGreaterThan: (x: number) => (val: any) => val.toString().length <= x ? 'Length should be greater than ' + x : undefined,
     
     // The maximum and minimum size are in KB
-    validateMinFileSize : (min: number) => (value: FileList) => {
-                                                                    for(let i=0; i<value.length; i++){
-                                                                        if(!(value[i].size >= min * 1024)){
-                                                                            return `File size should be greater than ${min}KB`;
+    validateMinFileSize : (min: number) => (value: File[]) => {
+                                                                    if(value){
+                                                                        for(let i=0; i<value.length; i++){
+                                                                            if(!(value[i].size >= min * 1024)){
+                                                                                return `File size should be greater than ${min}KB`;
+                                                                            }
                                                                         }
                                                                     }
                                                                     return undefined;
                                                                 },
 
-    validateFileCount: (max: number) => (value: FileList) => value.length <= max ? undefined : `Only selection of max ${max} files are allowed`,
-    validateMaxFileSize: (max: number) => (value: FileList) => {
-                                                                for(let i=0; i<value.length; i++){
+    validateFileCount: (max: number) => (value: File[]) => {
+        if(value){
+            if(value.length <= max) return undefined;
+            else return `Only selection of max ${max} files are allowed`;
+        }
+        return undefined;
+    },
+    validateMaxFileSize: (max: number) => (value: File[]) => {
+                                                                if(value){
+                                                                    for(let i=0; i<value.length; i++){
                                                                         if(!(value[i].size <= max * 1024)){
                                                                             return `File size should not be greater than ${max}KB.`
                                                                         }
                                                                     }
+                                                                }
                                                                 return undefined;
                                                             },
 }

@@ -25,3 +25,17 @@
     cursor: pointer;
     color: #ff3545;
 }
+
+.browse-btn{
+    background-color: #e4e4e4;
+    border: 1px #707070 solid;
+    padding: 3px 10px 3px 10px;
+    display: inline-block;
+    box-shadow: 1px 1px;
+}
+
+.browse-btn:hover{
+    cursor: pointer;
+    background-color: #a6f4ff;
+    border-color: #3fabde;
+}

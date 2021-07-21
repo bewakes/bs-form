@@ -92,6 +92,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         (ev: React.FormEvent<HTMLFormElement>) => {
             ev.preventDefault();
             const valid = validateAndSetErrors();
+            console.log("valid", valid);
             if (!valid) return;
             // Filter form values only if display condition does not return false
             if (schema) {
@@ -127,7 +128,16 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
                     value = ev.currentTarget.checked;
                 }
                 if(ev.currentTarget.type === "file"){
-                    value = Array.from(ev.currentTarget.files as FileList);
+                    const currentSelected = Array.from(ev.currentTarget.files as FileList);
+                    if(!(name in formValues)){
+                        value = currentSelected;
+                    }
+                    else{
+                        value = [...formValues[name as string]];
+                        for(let file of currentSelected){
+                            value.push(file);
+                        }
+                    }
                 }
                 const valProcessor = valueProcessor || ((x) => x);
                 setDirty({ ...dirty, [name]: true });

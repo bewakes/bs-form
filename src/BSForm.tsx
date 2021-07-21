@@ -36,12 +36,11 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
     const renderValue = renderer(value);
 
     const removeFileSelection = (index: number) => {
-        console.log(formValues[name]);
-        const updatedFormValues = formValues[name];
-        console.log(updatedFormValues[index]);
-        (formValues[name] as Array<File>).splice(index, 1);
-        // .splice(index, 1);
-        // setFormValues(updatedFormValues);
+        let updatedFormValues = [...(formValues[name as string] as Array<File>)];
+        updatedFormValues.splice(index, 1);
+        setFormValues({...formValues, 
+                [name]: updatedFormValues
+            });
     }
 
     if(schema.displayCondition && !schema.displayCondition(formValues)) {
@@ -106,7 +105,12 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 accept={ schema.allowedFileExtensions? schema.allowedFileExtensions : "*" } 
                 onChange={ onChange }
                 { ...other } 
+                style={{ display: "none" }}
+                id="uploadFile"
             />
+            <span className="browse-btn" onClick={ () => document.getElementById("uploadFile")?.click() }>
+                Browse...
+            </span>
             {
                 // schema.allowedFileCount && 
                 //     <FormText color="muted">
