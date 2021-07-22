@@ -92,6 +92,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         (ev: React.FormEvent<HTMLFormElement>) => {
             ev.preventDefault();
             const valid = validateAndSetErrors();
+            console.log("valid", valid);
             if (!valid) return;
             // Filter form values only if display condition does not return false
             if (schema) {

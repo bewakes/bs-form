@@ -168,6 +168,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         disabled, actions,
         actionName, actionsTop
     } = props;
+
     const { formValues, formErrors, onChange, onSubmit, setFormValues, setFormErrors} = form;
     // TODO: use formErrors
     type FormType = typeof formValues;
