@@ -8,7 +8,7 @@ export type Option = { label: string; value: string | number };
 
 export type InputType = "select" | NonSelect;
 
-type Falsy = false | 0 | undefined | null;
+export type Falsy = false | 0 | undefined | null;
 
 export type Validation<T> = (value: any, formValues: T) => (string | Falsy);
 
@@ -45,6 +45,7 @@ export interface UseForm<T> {
     resetForm: () => void;
     updateForm: (a: T) => void;
     setFormValues: (a: T) => void;
+    setFormErrors: (a: T) => void;
     setResetValues: (a: T) => void;
     setSchema: (a: Schema<T>) => void;
     resetValues: T;
