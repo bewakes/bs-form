@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
-
+import { Errors } from './useForm';
 import './style.css';
 
 type FormProps<T> = {
@@ -26,21 +26,34 @@ interface WrappedInputProps<T> {
     schema: SchemaSpec<T>;
     value: any;
     formValues: T;
-    error?: string;
+    formErrors?: Errors<T>;
     setFormValues: (x: any) => any;
+    setFormErrors: (x: any) => any;
 }
 
 function WrappedInput<T> (props: WrappedInputProps<T>) {
-    const { name, schema, value, formValues, error, onChange, setFormValues, ...other } = props;
+    const { name, schema, value, formValues, formErrors, onChange, setFormValues, setFormErrors, ...other } = props;
     const renderer = schema.valueRenderer || (x => x);
     const renderValue = renderer(value);
 
     const removeFileSelection = (index: number) => {
-        let updatedFormValues = [...(formValues[name as string] as Array<File>)];
-        updatedFormValues.splice(index, 1);
-        setFormValues({...formValues, 
-                [name]: updatedFormValues
-            });
+        const updatedFileValues = (formValues[name as string] as Array<File>).filter((_, i) => i!=index);
+        const updatedFormValues = { ...formValues, [name]: updatedFileValues };
+        setFormValues(updatedFormValues);
+
+        const err = schema.validation? schema.validation(updatedFileValues, updatedFormValues): undefined;
+
+        if(typeof(err) === 'string'){
+            setFormErrors({...formErrors,
+                    [name]: err
+                })
+        }
+        else{
+            if(formErrors && formErrors[name]){
+                const {[name]:_, ...updatedFormErrors} = formErrors;
+                setFormErrors(updatedFormErrors);
+            }
+        }
     }
 
     if(schema.displayCondition && !schema.displayCondition(formValues)) {
@@ -51,13 +64,13 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             <React.Fragment>
                 <Label>
                     {schema.label}{ schema.required && <span className="input-error">*</span> }
-                    <small className="input-error">{error}</small>
+                    <small className="input-error">{formErrors && formErrors[name]}</small>
                 </Label>
                 <Input
                     name={name as string}
                     value={renderValue}
                     type="select"
-                    invalid={!!error}
+                    invalid={!!(formErrors && formErrors[name])}
                     onChange={ onChange }
                     {...other}
                 >
@@ -78,7 +91,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 <Label check>
                     <Input
                         type="checkbox"
-                        invalid={!!error}
+                        invalid={!!(formErrors && formErrors[name])}
                         checked={renderValue}
                         onChange={ onChange }
                         {...other}
@@ -96,10 +109,10 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         <FormGroup>
             <Label style={{ display: "block"}}>
                 { schema.label }
-                <small className="input-error">{error}</small>
+                <small className="input-error">{formErrors && formErrors[name]}</small>
             </Label>
             <Input 
-                type="file" 
+                type="file"
                 name={name as string}  
                 multiple={ schema.allowMultipleFiles === undefined ? true : schema.allowMultipleFiles }
                 accept={ schema.allowedFileExtensions? schema.allowedFileExtensions : "*" } 
@@ -108,9 +121,9 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 style={{ display: "none" }}
                 id="uploadFile"
             />
-            <span className="browse-btn" onClick={ () => document.getElementById("uploadFile")?.click() }>
+            <button type="button" className="browse-btn" onClick={ () => document.getElementById("uploadFile")?.click() }>
                 Browse...
-            </span>
+            </button>
             {
                 // schema.allowedFileCount && 
                 //     <FormText color="muted">
@@ -134,14 +147,14 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         <React.Fragment>
             <Label>
                 {schema.label}{ schema.required && <span className="input-error">*</span> }
-                <small className="input-error">{error}</small>
+                <small className="input-error">{formErrors && formErrors[name]}</small>
             </Label>
         <Input
             name={name as string}
             value={renderValue}
             type={schema.type}
             placeholder={schema.placeholder}
-            invalid={!!error}
+            invalid={!!(formErrors && formErrors[name])}
             onChange={ onChange }
             {...other}
         />
@@ -155,7 +168,8 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         disabled, actions,
         actionName, actionsTop
     } = props;
-    const { formValues, formErrors, onChange, onSubmit, setFormValues } = form;
+
+    const { formValues, formErrors, onChange, onSubmit, setFormValues, setFormErrors} = form;
     // TODO: use formErrors
     type FormType = typeof formValues;
 
@@ -205,7 +219,8 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                                     onChange={onChange(fieldName, schema[fieldName as (keyof FormType)].valueProcessor)}
                                     formValues={formValues}
                                     setFormValues={setFormValues}
-                                    error={formErrors[fieldName as (keyof FormType)]}
+                                    setFormErrors={setFormErrors}
+                                    formErrors={formErrors}
                                 />
                             </FormGroup>
                             </Col>

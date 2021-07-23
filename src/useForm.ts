@@ -2,7 +2,7 @@ import React from 'react';
 import { UseForm, Schema, Validation } from './types';
 import { filterObject, validations, validationAnd } from './utils';
 
-type Errors<T> = {
+export type Errors<T> = {
     [K in keyof T]?: string;
 };
 
@@ -152,6 +152,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         resetForm,
         resetValues,
         setFormValues,
+        setFormErrors,
         setSchema,
         setResetValues
     } as UseForm<T>;
