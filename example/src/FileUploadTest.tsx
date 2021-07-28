@@ -90,14 +90,15 @@ const FileUploadComponent: React.FC = () => {
         uploadFile(formValues.fileAttachments);
         console.log(formValues);
     };
-    const initialValues: FileUpload = {
-        name: "zombie",
-        age: 9,
-        fileAttachments: {
-            prevSelections: attachedFiles,
-            currSelections: []
-        }
-    } as FileUpload;
+    // const initialValues: FileUpload = {
+    //     name: "zombie",
+    //     age: 9,
+    //     fileAttachments: {
+    //         prevSelections: attachedFiles,
+    //         currSelections: []
+    //     }
+    // } as FileUpload;
+    const initialValues = {} as FileUpload;
     const form = useForm(initialValues, schema);
     console.warn(form.formErrors);
     return (

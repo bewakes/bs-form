@@ -1,6 +1,7 @@
 import {
     Validation,
     DisplayCondition,
+    FileAttachments,
 } from './types';
 
 export const validationOr = (...validationFuncs: Validation<any>[]) => (val: any, formValues: any) => {
@@ -33,10 +34,10 @@ export const validations = {
     lengthGreaterThan: (x: number) => (val: any) => val.toString().length <= x ? 'Length should be greater than ' + x : undefined,
     
     // The maximum and minimum size are in KB
-    validateMinFileSize : (min: number) => (value: File[]) => {
+    validateMinFileSize : (min: number) => (value: FileAttachments<any>) => {
                                                                     if(value){
-                                                                        for(let i=0; i<value.length; i++){
-                                                                            if(!(value[i].size >= min * 1024)){
+                                                                        for(let i=0; i<value.currSelections.length; i++){
+                                                                            if(!(value.currSelections[i].size >= min * 1024)){
                                                                                 return `File size should be greater than ${min}KB`;
                                                                             }
                                                                         }
@@ -44,17 +45,18 @@ export const validations = {
                                                                     return undefined;
                                                                 },
 
-    validateFileCount: (max: number) => (value: File[]) => {
+    validateFileCount: (max: number) => (value: any) => {
         if(value){
-            if(value.length <= max) return undefined;
+            const prevSelectionLen = value.prevSelections? value.prevSelections.length: 0;
+            if((value.currSelections.length + prevSelectionLen) <= max) return undefined;
             else return `Only selection of max ${max} files are allowed`;
         }
         return undefined;
     },
-    validateMaxFileSize: (max: number) => (value: File[]) => {
+    validateMaxFileSize: (max: number) => (value: any) => {
                                                                 if(value){
-                                                                    for(let i=0; i<value.length; i++){
-                                                                        if(!(value[i].size <= max * 1024)){
+                                                                    for(let i=0; i<value.currSelections.length; i++){
+                                                                        if(!(value.currSelections[i].size <= max * 1024)){
                                                                             return `File size should not be greater than ${max}KB.`
                                                                         }
                                                                     }
