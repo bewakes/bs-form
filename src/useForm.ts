@@ -128,6 +128,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
                     value = ev.currentTarget.checked;
                 }
                 if(ev.currentTarget.type === "file"){
+                    name = (name + ".currSelections") as keyof T;
                     const currentSelected = Array.from(ev.currentTarget.files as FileList);
                     if(!(name in formValues)){
                         value = currentSelected;

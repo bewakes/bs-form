@@ -15,13 +15,14 @@ export type Validation<T> = (value: any, formValues: T) => (string | Falsy);
 export type DisplayCondition<T> = (_: T) => boolean;
 export type DisplayConditions<T> = { [K in keyof T]: DisplayCondition<T> | undefined };
 
-export type SchemaSpec<T> = {
+export type SchemaSpec<T, Y=any> = {
     label: string;
     required?: boolean;
     displayCondition?: (formVals: T) => boolean;
     validation?: Validation<T>;
     valueRenderer?: ValToVal;
     valueProcessor?: ValToVal;
+    parseFileNames?: (fileResponse: Y[]) => String[];
     placeholder?: string;
     allowMultipleFiles?: boolean;
     allowedFileCount?: number;
@@ -33,8 +34,8 @@ export type SchemaSpec<T> = {
         options: Option[];
 });
 
-export type Schema<T> = {
-    [K in keyof T]: SchemaSpec<T>;
+export type Schema<T, Y=any> = {
+    [K in keyof T]: SchemaSpec<T, Y>;
 };
 
 export interface UseForm<T> {
@@ -49,4 +50,9 @@ export interface UseForm<T> {
     setResetValues: (a: T) => void;
     setSchema: (a: Schema<T>) => void;
     resetValues: T;
+}
+
+export interface FileAttachments<T>{
+    prevSelections: T[],
+    currSelections: File[]
 }
