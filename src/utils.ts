@@ -24,6 +24,17 @@ export const validationAnd = (...validationFuncs: Validation<any>[]) => (val: an
     return undefined;
 };
 
+export const parseFileNames = (fileURLs: String[]) => {
+            let filenames: String[] = [];
+            for(const url of fileURLs){
+                const splits = url.split("/");
+                const temp = splits[splits.length - 1].split("-");
+                const filename = temp[temp.length - 1];
+                filenames.push(filename);
+            }
+            return filenames;
+        }
+
 export const validations = {
     noEmpty: (val: any) => (val === undefined || val === null || val.toString() === '') ? 'This cannot be empty': undefined,
     lessThan: (x: number) => (val: any) => val >= x ? 'Must be less than ' + x : undefined,
@@ -34,7 +45,7 @@ export const validations = {
     lengthGreaterThan: (x: number) => (val: any) => val.toString().length <= x ? 'Length should be greater than ' + x : undefined,
     
     // The maximum and minimum size are in KB
-    validateMinFileSize : (min: number) => (value: FileAttachments<any>) => {
+    validateMinFileSize : (min: number) => (value: FileAttachments) => {
                                                                     if(value){
                                                                         for(let i=0; i<value.currSelections.length; i++){
                                                                             if(!(value.currSelections[i].size >= min * 1024)){
@@ -45,7 +56,7 @@ export const validations = {
                                                                     return undefined;
                                                                 },
 
-    validateFileCount: (max: number) => (value: any) => {
+    validateFileCount: (max: number) => (value: FileAttachments) => {
         if(value){
             const prevSelectionLen = value.prevSelections? value.prevSelections.length: 0;
             if((value.currSelections.length + prevSelectionLen) <= max) return undefined;
@@ -53,7 +64,7 @@ export const validations = {
         }
         return undefined;
     },
-    validateMaxFileSize: (max: number) => (value: any) => {
+    validateMaxFileSize: (max: number) => (value: FileAttachments) => {
                                                                 if(value){
                                                                     for(let i=0; i<value.currSelections.length; i++){
                                                                         if(!(value.currSelections[i].size <= max * 1024)){
