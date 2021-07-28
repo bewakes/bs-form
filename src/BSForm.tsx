@@ -36,24 +36,24 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
     const renderer = schema.valueRenderer || (x => x);
     const renderValue = renderer(value);
 
-    const removeFileSelection = (index: number) => {
-        const updatedFileValues = (formValues[name as string] as Array<File>).filter((_, i) => i!=index);
-        const updatedFormValues = { ...formValues, [name]: updatedFileValues };
-        setFormValues(updatedFormValues);
+    const removeFileSelection = (index: number, selectionType: "currSelections"|"prevSelections") => {
+            const updatedFileValues = formValues[name + "." + selectionType].filter((_: any, i:number) => i!=index);
+            const updatedFormValues = { ...formValues, [name + "." + selectionType]: updatedFileValues };
+            setFormValues(updatedFormValues);
 
-        const err = schema.validation? schema.validation(updatedFileValues, updatedFormValues): undefined;
+            // const err = schema.validation? schema.validation(updatedFileValues, updatedFormValues): undefined;
 
-        if(typeof(err) === 'string'){
-            setFormErrors({...formErrors,
-                    [name]: err
-                })
-        }
-        else{
-            if(formErrors && formErrors[name]){
-                const {[name]:_, ...updatedFormErrors} = formErrors;
-                setFormErrors(updatedFormErrors);
-            }
-        }
+        // if(typeof(err) === 'string'){
+        //     setFormErrors({...formErrors,
+        //             [name]: err
+        //         })
+        // }
+        // else{
+        //     if(formErrors && formErrors[name]){
+        //         const {[name]:_, ...updatedFormErrors} = formErrors;
+        //         setFormErrors(updatedFormErrors);
+        //     }
+        // }
     }
 
     if(schema.displayCondition && !schema.displayCondition(formValues)) {
@@ -131,14 +131,30 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 //     </FormText>
             }
             {
-                schema.allowMultipleFiles && formValues[name] &&
-                    Object.entries(formValues[name]).map(
+                formValues[name+'.currSelections'] && 
+                    Object.entries(formValues[name+'.currSelections']).map(
                         ([key, file]) => 
                             <div key={ key }>
-                                <span>{ file.name }</span>
-                                <span className="remove-file" onClick={ () => removeFileSelection(+key)}>X</span>
+                                <span>{ (file as File).name }</span>
+                                <span className="remove-file" onClick={ () => removeFileSelection(+key, "currSelections")}>X</span>
                             </div>
-                    )
+                )
+            }
+            {
+                formValues[name+'.prevSelections'].length !== 0 &&
+                    <div>
+                        <hr/>
+                        <b>Previous selected files:</b>
+                        {
+                            schema.parseFileNames && schema.parseFileNames(formValues[name+'.prevSelections']).map(
+                                (filename:string, index:number) => 
+                                    <div key={ index }>
+                                        <span>{ filename }</span>
+                                        <span className="remove-file" onClick={ () => removeFileSelection(+index, "prevSelections")}>X</span>
+                                    </div>
+                            )
+                        }
+                    </div>
             }
         </FormGroup>
         );
