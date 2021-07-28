@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
-import { Errors } from './useForm';
+import { Errors, nestifyValues } from './useForm';
 import './style.css';
 
 type FormProps<T> = {
@@ -41,19 +41,19 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             const updatedFormValues = { ...formValues, [name + "." + selectionType]: updatedFileValues };
             setFormValues(updatedFormValues);
 
-            // const err = schema.validation? schema.validation(updatedFileValues, updatedFormValues): undefined;
+            const err = schema.validation? schema.validation(nestifyValues(updatedFormValues)[name], updatedFormValues): undefined;
 
-        // if(typeof(err) === 'string'){
-        //     setFormErrors({...formErrors,
-        //             [name]: err
-        //         })
-        // }
-        // else{
-        //     if(formErrors && formErrors[name]){
-        //         const {[name]:_, ...updatedFormErrors} = formErrors;
-        //         setFormErrors(updatedFormErrors);
-        //     }
-        // }
+            if(typeof(err) === 'string'){
+                setFormErrors({...formErrors,
+                        [name]: err
+                    })
+            }
+            else{
+                if(formErrors && formErrors[name]){
+                    const {[name]:_, ...updatedFormErrors} = formErrors;
+                    setFormErrors(updatedFormErrors);
+                }
+            }
     }
 
     if(schema.displayCondition && !schema.displayCondition(formValues)) {
@@ -141,7 +141,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 )
             }
             {
-                formValues[name+'.prevSelections'].length !== 0 &&
+                formValues[name+'.prevSelections'] && formValues[name+'.prevSelections'].length !== 0 &&
                     <div>
                         <hr/>
                         <b>Previous selected files:</b>

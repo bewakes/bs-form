@@ -1,5 +1,5 @@
 import React from 'react';
-import { UseForm, Schema, Validation } from './types';
+import { UseForm, Schema, Validation, SchemaSpec } from './types';
 import { filterObject, validations, validationAnd } from './utils';
 
 export type Errors<T> = {
@@ -21,7 +21,7 @@ const flatifyValues = (obj: any): any => {
     return flatVals;
 };
 
-const nestifyValues = (obj: { [key: string]: any }): any => {
+export const nestifyValues = (obj: { [key: string]: any }): any => {
     // NOTE: this function does heavy mutation
     const nestedValues: { [key: string]: any } = {};
     Object.entries(obj).forEach(([k, v]) => {
@@ -56,7 +56,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         
     const validateAndSetErrors = () => {
         if (schema) {
-            const errs = Object.keys(schema).reduce((acc, key) => {
+            const errs = Object.entries(schema).reduce((acc, [key, value]) => {
                 const requiredValidation = schema[key as keyof T].required
                     ? validations.noEmpty
                     : () => undefined;
@@ -66,11 +66,22 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
                 const fieldValidation = validationAnd(
                     requiredValidation,
                     explicitValidation as Validation<T>
-                );
-                const validation = fieldValidation(
-                    formValues[key as keyof T],
-                    formValues
-                );
+                ); 
+
+                let validation;
+                if((value as SchemaSpec<T>).type === 'file'){
+                    validation = fieldValidation(
+                        nestifyValues(formValues)[key as keyof T],
+                        nestifyValues(formValues)
+                    )
+                }
+                else{
+                    validation = fieldValidation(
+                        formValues[key as keyof T],
+                        formValues
+                    );
+                }
+
                 if (validation !== undefined) {
                     return { ...acc, [key]: validation };
                 }
