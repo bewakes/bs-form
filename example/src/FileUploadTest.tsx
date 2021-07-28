@@ -4,46 +4,30 @@ import { Row, Col } from 'reactstrap';
 import { BSForm, BSTypes as B, useForm, validationAnd, validations } from 'bs-form';
 import 'bs-form/dist/index.css';
 
-interface FileResponse{
-    id: number,
-    url: string
-}
-
 interface FileUpload{
 	name: string;
     age: number;
-	fileAttachments: B.FileAttachments<FileResponse>;
+	fileAttachments: B.FileAttachments;
 }
 
-const attachedFiles = [
-                {
-                    id: 1,
-                    url: "/media/pa_task_files/96B06DF10FE970F14E791711528CD835-Screenshot (37).png"
-                },
-                {
-                    id: 2,
-                    url: "/media/pa_task_files/8EB9131641B53D06BF624781FE99D5BB-Screenshot (38).png"
-                }
-            ];
+const fileAPIResponse = [
+    {
+        id: 1,
+        url: "/media/pa_task_files/96B06DF10FE970F14E791711528CD835-Screenshot (37).png"
+    },
+    {
+        id: 2,
+        url: "/media/pa_task_files/8EB9131641B53D06BF624781FE99D5BB-Screenshot (38).png"
+    }
+]
+const attachedFiles = fileAPIResponse.map(x => x.url);
 
-const schema: B.Schema<FileUpload, FileResponse> = {
+const schema: B.Schema<FileUpload> = {
     name: { type: "text", label: "Your name", required: true },
 	fileAttachments: {
         type: "file",
         label: "Select your file(s)",
-        allowMultipleFiles: true,
-		allowedFileCount: 2,
         allowedFileExtensions: ".pdf, image/*",
-        parseFileNames: (fileResponses: FileResponse[]) => {
-            let filenames: String[] = [];
-            for(const fileResp of fileResponses){
-                const splits = fileResp.url.split("/");
-                const temp = splits[splits.length - 1].split("-");
-                const filename = temp[temp.length - 1];
-                filenames.push(filename);
-            }
-            return filenames;
-        },
         validation: validationAnd(validations.validateFileCount(2), validations.validateMaxFileSize(500)),
     },
     age: { type:"text", label: "Your age" }
@@ -55,13 +39,14 @@ const layout: B.Layout<FileUpload> = [
 	['fileAttachments'],
 ];
 
-const uploadFile = (fileAttachments: B.FileAttachments<FileResponse>) => {
+const uploadFile = (fileAttachments: B.FileAttachments) => {
     const postBody = new FormData();
     for(let i=0; i< fileAttachments.currSelections.length; i++){
         postBody.append("files", fileAttachments.currSelections[i]);
     }
 
-    const removedFileIds = getRemovedFileIds(attachedFiles, fileAttachments.prevSelections);
+    // id of removed previous files
+    const removedFileIds = getRemovedFileIds(fileAPIResponse, fileAttachments.prevSelections || []);
     postBody.append("deleteIds", JSON.stringify(removedFileIds));
 
     fetch("http://localhost:8080/dr2client/api/file-upload", {
@@ -78,9 +63,9 @@ const uploadFile = (fileAttachments: B.FileAttachments<FileResponse>) => {
     .catch( err => console.log(err));
 }
 
-const getRemovedFileIds = (previousFiles: FileResponse[], updatedFiles: FileResponse[]) => {
-    if(previousFiles.length > updatedFiles.length){
-        return previousFiles.filter(x => !updatedFiles.includes(x)).map(y => y.id);
+const getRemovedFileIds = (fileAPIResponse: any, updatedFiles: String[]) => {
+    if(fileAPIResponse.length > updatedFiles.length){
+        return fileAPIResponse.filter((x: any) => !updatedFiles.includes(x.url)).map((y: any) => y.id);
     }
     return [];
 }
@@ -90,15 +75,14 @@ const FileUploadComponent: React.FC = () => {
         uploadFile(formValues.fileAttachments);
         console.log(formValues);
     };
-    // const initialValues: FileUpload = {
-    //     name: "zombie",
-    //     age: 9,
-    //     fileAttachments: {
-    //         prevSelections: attachedFiles,
-    //         currSelections: []
-    //     }
-    // } as FileUpload;
-    const initialValues = {} as FileUpload;
+    const initialValues: FileUpload = {
+        name: "zombie",
+        age: 9,
+        fileAttachments: {
+            prevSelections: attachedFiles,
+            currSelections: []
+        }
+    } as FileUpload;
     const form = useForm(initialValues, schema);
     console.warn(form.formErrors);
     return (

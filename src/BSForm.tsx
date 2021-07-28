@@ -3,6 +3,7 @@ import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reacts
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
 import { Errors, nestifyValues } from './useForm';
+import { parseFileNames } from './utils';
 import './style.css';
 
 type FormProps<T> = {
@@ -105,6 +106,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         return <h5 style={{marginBottom: "-8px", marginTop: "8px"}}>{schema.label}</h5>;
     }
     if (schema.type === 'file'){
+        const mParseFileNames = schema.parseFileNames? schema.parseFileNames : parseFileNames;
         return  ( 
         <FormGroup>
             <Label style={{ display: "block"}}>
@@ -114,7 +116,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             <Input 
                 type="file"
                 name={name as string}  
-                multiple={ schema.allowMultipleFiles === undefined ? true : schema.allowMultipleFiles }
+                multiple={true}
                 accept={ schema.allowedFileExtensions? schema.allowedFileExtensions : "*" } 
                 onChange={ onChange }
                 { ...other } 
@@ -146,7 +148,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                         <hr/>
                         <b>Previous selected files:</b>
                         {
-                            schema.parseFileNames && schema.parseFileNames(formValues[name+'.prevSelections']).map(
+                            mParseFileNames(formValues[name+'.prevSelections']).map(
                                 (filename:string, index:number) => 
                                     <div key={ index }>
                                         <span>{ filename }</span>

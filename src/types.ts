@@ -3,10 +3,10 @@ export type ValToVal = (v: any, formvals?: any) => any;
 export type LayoutElement<T> = keyof T | Array<keyof T>;
 export type Layout<T> = Array<LayoutElement<T>>[];
 export type ProcessedLayoutRow<T> = Array<[keyof T, number]>;
-export type NonSelect = "number" | "text" | "date" |  "email" | "password" | "textarea" | "checkbox" | "time" | "label" | "file";
+export type NonSelect = "number" | "text" | "date" |  "email" | "password" | "textarea" | "checkbox" | "time" | "label";
 export type Option = { label: string; value: string | number };
 
-export type InputType = "select" | NonSelect;
+export type InputType = "select" | "file" | NonSelect;
 
 export type Falsy = false | 0 | undefined | null;
 
@@ -15,27 +15,28 @@ export type Validation<T> = (value: any, formValues: T) => (string | Falsy);
 export type DisplayCondition<T> = (_: T) => boolean;
 export type DisplayConditions<T> = { [K in keyof T]: DisplayCondition<T> | undefined };
 
-export type SchemaSpec<T, Y=any> = {
+export type SchemaSpec<T> = {
     label: string;
     required?: boolean;
     displayCondition?: (formVals: T) => boolean;
     validation?: Validation<T>;
     valueRenderer?: ValToVal;
     valueProcessor?: ValToVal;
-    parseFileNames?: (fileResponse: Y[]) => String[];
     placeholder?: string;
-    allowMultipleFiles?: boolean;
-    allowedFileCount?: number;
-    allowedFileExtensions?: string;
 } & ({
     type: NonSelect; }
   | {
         type: "select";
         options: Option[];
-});
+    }
+  |{
+        type: "file";
+        allowedFileExtensions?: string;
+        parseFileNames?: (fileURLs: String[]) => String[];
+  });
 
-export type Schema<T, Y=any> = {
-    [K in keyof T]: SchemaSpec<T, Y>;
+export type Schema<T> = {
+    [K in keyof T]: SchemaSpec<T>;
 };
 
 export interface UseForm<T> {
@@ -52,7 +53,7 @@ export interface UseForm<T> {
     resetValues: T;
 }
 
-export interface FileAttachments<T>{
-    prevSelections: T[],
+export interface FileAttachments{
+    prevSelections: String[],
     currSelections: File[]
 }
