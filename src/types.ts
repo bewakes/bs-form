@@ -32,7 +32,7 @@ export type SchemaSpec<T> = {
   |{
         type: "file";
         allowedFileExtensions?: string;
-        parseFileNames?: (fileURLs: String[]) => String[];
+        parseFileName?: (fileURL: String) => String;
   });
 
 export type Schema<T> = {

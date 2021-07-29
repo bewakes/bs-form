@@ -3,7 +3,7 @@ import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reacts
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
 import { Errors, nestifyValues } from './useForm';
-import { parseFileNames } from './utils';
+import { parseFileName } from './utils';
 import './style.css';
 
 type FormProps<T> = {
@@ -106,7 +106,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         return <h5 style={{marginBottom: "-8px", marginTop: "8px"}}>{schema.label}</h5>;
     }
     if (schema.type === 'file'){
-        const mParseFileNames = schema.parseFileNames? schema.parseFileNames : parseFileNames;
+        const mParseFileName = schema.parseFileName? schema.parseFileName : parseFileName;
         return  ( 
         <FormGroup>
             <Label style={{ display: "block"}}>
@@ -127,12 +127,6 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 Browse...
             </button>
             {
-                // schema.allowedFileCount && 
-                //     <FormText color="muted">
-                //         { `Please select ${schema.allowedFileCount} files at max.`}
-                //     </FormText>
-            }
-            {
                 formValues[name+'.currSelections'] && 
                     Object.entries(formValues[name+'.currSelections']).map(
                         ([key, file]) => 
@@ -148,7 +142,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                         <hr/>
                         <b>Previous selected files:</b>
                         {
-                            mParseFileNames(formValues[name+'.prevSelections']).map(
+                            formValues[name+'.prevSelections'].map(mParseFileName).map(
                                 (filename:string, index:number) => 
                                     <div key={ index }>
                                         <span>{ filename }</span>
