@@ -72,8 +72,8 @@ const getRemovedFileIds = (fileAPIResponse: any, updatedFiles: String[]) => {
 
 const FileUploadComponent: React.FC = () => {
 	const onSubmit = (formValues: FileUpload) => { 
-        uploadFile(formValues.fileAttachments);
         console.log(formValues);
+        uploadFile(formValues.fileAttachments);
     };
     const initialValues: FileUpload = {
         name: "zombie",

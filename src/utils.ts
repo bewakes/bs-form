@@ -24,15 +24,11 @@ export const validationAnd = (...validationFuncs: Validation<any>[]) => (val: an
     return undefined;
 };
 
-export const parseFileNames = (fileURLs: String[]) => {
-            let filenames: String[] = [];
-            for(const url of fileURLs){
-                const splits = url.split("/");
-                const temp = splits[splits.length - 1].split("-");
-                const filename = temp[temp.length - 1];
-                filenames.push(filename);
-            }
-            return filenames;
+export const parseFileName = (fileURL: String) => {
+            const splits = fileURL.split("/");
+            const temp = splits[splits.length - 1].split("-");
+            const filename = temp[temp.length - 1];
+            return filename;
         }
 
 export const validations = {
