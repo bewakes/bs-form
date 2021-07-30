@@ -1,10 +1,11 @@
 import React from 'react';
-import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
+import { Row, Col, Form as BForm, Input, Label, FormGroup, Button, Alert } from 'reactstrap';
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
 import { Errors, nestifyValues } from './useForm';
 import { parseFileName } from './utils';
 import './style.css';
+import { ProgressBar } from './ProgressBar';
 
 type FormProps<T> = {
     form: UseForm<T>;
@@ -18,7 +19,9 @@ type FormProps<T> = {
         color?: "primary" | "success" | "danger" | "warning";
     }[];
     disabled?: boolean;
-    actionsTop?: boolean;
+    actionsTop?: boolean; 
+    showProgressBar?: boolean;
+    setShowProgressBar?: (x: boolean) => any;
 };
 
 interface WrappedInputProps<T> {
@@ -178,7 +181,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
     const {
         submitCallback, layout, schema, form,
         disabled, actions,
-        actionName, actionsTop
+        actionName, actionsTop, showProgressBar, setShowProgressBar
     } = props;
 
     const { formValues, formErrors, onChange, onSubmit, setFormValues, setFormErrors} = form;
@@ -214,9 +217,15 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         </React.Fragment>
     );
     return (
-        <BForm className="tf-form" onSubmit={onSubmit(submitCallback)}>
+        <BForm className="tf-form" onSubmit={onSubmit(submitCallback, setShowProgressBar)}>
             <fieldset disabled={!!disabled}>
-            {actionsTop && <React.Fragment>{buttons}<hr/></React.Fragment>}
+            {actionsTop && <React.Fragment>{buttons}<hr/></React.Fragment>} 
+            {
+                showProgressBar!=undefined && showProgressBar &&
+                <Alert color='light'>
+                    <ProgressBar text="Uploading File..."/>
+                </Alert>
+            }
             {
                 processedLayout.map((rows, i: number) => (
                     <Row key={i}>
@@ -242,6 +251,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                 ))
             }
             {!actionsTop && <React.Fragment><hr />{buttons}</React.Fragment>}
+          
             </fieldset>
         </BForm>
     );
