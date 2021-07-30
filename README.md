@@ -28,6 +28,7 @@ yarn add bs-form
 
 ## Features
 - [x] Full typescript support
+- [x] Custom file upload support(allows multiple file selection from different folders)
 - [x] Validate/Display/Hide the fields using js functions. This is very powerful!!
 - [x] Specify form layout as array. This is really awesome!!
 - [x] No need to write a single html/jsx
@@ -52,6 +53,7 @@ interface User {
     address: string;
     gender: string;
     hairLength: number;
+    files: B.FileAttachments;
 }
 
 const schema: B.Schema<User> = {
@@ -79,6 +81,12 @@ const schema: B.Schema<User> = {
         validation: (val, otherValues: User) => otherValues.gender == 'male'
                                                 ? (val > 10) && "A guy can't have more than 10 cms long"
                                                 : (val < 10) && "A girl can't have less than 10 cms long"
+    },
+    files: {
+        type: "file",
+        label: "Select your file(s)",
+        allowedFileExtensions: ".pdf, image/*",
+        validation: validationAnd(validations.validateFileCount(2), validations.validateMaxFileSize(500)),
     }
 };
 
@@ -86,7 +94,8 @@ const layout: B.Layout<User> = [
     ['name'],
     ['age', 'height'],
     ['address'],
-    ['gender', 'hairLength']
+    ['gender', 'hairLength'],
+    ['files']
 ];
 
 
@@ -121,7 +130,6 @@ Note that, when gender is selected (male or female) the hair length input appear
 Now, if gender is male, and hair length is more than 10, as specified in the schema, it also throws an error
 ![image](https://user-images.githubusercontent.com/5417640/121903005-93254f00-cd47-11eb-8a73-655cb7152de7.png)
 
-
 ## The API
 ### Schema
 A schema is an objet whose keys are the fields of the object that we are trying to render form for. The values of schema is an object consisting of the following:
@@ -130,6 +138,8 @@ A schema is an objet whose keys are the fields of the object that we are trying 
 - `required`: If the field is required. Will display error message.
 - `displayCondition`: A function returning boolean value. `true` if needs to be displayed and `false` otherwise. The parameters to the function is an object that current form state represents.
 - `validation`: This is a function that returns falsy value if valid, else returns string that will be the error message. The parameters are the current field value, and current form object value. The library also has some predefined validation functions.
+- `allowedFileExtensions`: It is used when the input type is file. It is a string of allowed file extensions separated by comma.
+- `parseFileName`: This is a function that takes the file URL as input and parses the file name. The returned file name is displayed in the UI.
 
 ### Layout
 A layout defines how the form is rendered. This is basically an array of arrays. Where each element of array represents a row-wise  ordering of form elements. The values are just the names of the fields. Please refer to the example above for the usage.
@@ -193,11 +203,15 @@ const {
  lengthEquals,
  lengthLessThan,
  lengthGreaterThan,
+ validateMinFileSize,
+ validateFileCount,
+ validateMaxFileSize
 } = validations;
 
 const schema: B.Schema<User> = {
     age: { ..., validation: validations.greaterThan(18) },
-    name: { ..., validation: validationAnd(noEmpty, lengthGreaterThan(3), lengthLessThan(20)) }
+    name: { ..., validation: validationAnd(noEmpty, lengthGreaterThan(3), lengthLessThan(20)) },
+    files: { ..., validation: validationAnd(validations.validateFileCount(2), validations.validateMaxFileSize(500)) }
 };
 ```
 Besides these, you can write your own validation functions and compose them with
