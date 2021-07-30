@@ -39,15 +39,15 @@ const layout: B.Layout<FileUpload> = [
 	['fileAttachments'],
 ];
 
-const uploadFile = (fileAttachments: B.FileAttachments) => {
+const uploadFile = (fileAttachments: B.FileAttachments, setShowProgressBar: (x: boolean) => any) => {
     const postBody = new FormData();
     for(let i=0; i< fileAttachments.currSelections.length; i++){
         postBody.append("files", fileAttachments.currSelections[i]);
     }
 
     // id of removed previous files
-    const removedFileIds = getRemovedFileIds(fileAPIResponse, fileAttachments.prevSelections || []);
-    postBody.append("deleteIds", JSON.stringify(removedFileIds));
+    // const removedFileIds = getRemovedFileIds(fileAPIResponse, fileAttachments.prevSelections || []);
+    // postBody.append("deleteIds", JSON.stringify(removedFileIds));
 
     fetch("http://localhost:8080/dr2client/api/file-upload", {
             method: 'POST',
@@ -59,22 +59,28 @@ const uploadFile = (fileAttachments: B.FileAttachments) => {
         }
     )
     .then(response => response.json())
-    .then(data => console.log(data))
+    .then(data => { 
+        console.log(data);
+        setShowProgressBar(false);
+    })
     .catch( err => console.log(err));
 }
 
-const getRemovedFileIds = (fileAPIResponse: any, updatedFiles: String[]) => {
-    if(fileAPIResponse.length > updatedFiles.length){
-        return fileAPIResponse.filter((x: any) => !updatedFiles.includes(x.url)).map((y: any) => y.id);
-    }
-    return [];
-}
+// const getRemovedFileIds = (fileAPIResponse: any, updatedFiles: String[]) => {
+//     if(fileAPIResponse.length > updatedFiles.length){
+//         return fileAPIResponse.filter((x: any) => !updatedFiles.includes(x.url)).map((y: any) => y.id);
+//     }
+//     return [];
+// }
 
 const FileUploadComponent: React.FC = () => {
+    const [ showProgressBar, setShowProgressBar ] = React.useState(false);
+
 	const onSubmit = (formValues: FileUpload) => { 
         console.log(formValues);
-        uploadFile(formValues.fileAttachments);
+        uploadFile(formValues.fileAttachments, setShowProgressBar);
     };
+
     const initialValues: FileUpload = {
         name: "zombie",
         age: 9,
@@ -96,6 +102,8 @@ const FileUploadComponent: React.FC = () => {
                     layout={layout}
                     submitCallback={onSubmit}
                     actionName="Check!"
+                    showProgressBar={showProgressBar}
+                    setShowProgressBar={setShowProgressBar}
                 />
             </Col>
             <Col md="3" />
