@@ -1,11 +1,11 @@
 import React from 'react';
-import { Row, Col, Form as BForm, Input, Label, FormGroup, Button, Alert } from 'reactstrap';
+import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
 import { Errors, nestifyValues } from './useForm';
 import { parseFileName } from './utils';
 import './style.css';
-import { ProgressBar } from './ProgressBar';
+import { WaitAlert } from './WaitAlert';
 
 type FormProps<T> = {
     form: UseForm<T>;
@@ -20,8 +20,9 @@ type FormProps<T> = {
     }[];
     disabled?: boolean;
     actionsTop?: boolean; 
-    showProgressBar?: boolean;
-    setShowProgressBar?: (x: boolean) => any;
+    showWaitAlert?: boolean;
+    setShowWaitAlert?: (x: boolean) => any;
+    waitAlertMessage?: string;
 };
 
 interface WrappedInputProps<T> {
@@ -181,7 +182,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
     const {
         submitCallback, layout, schema, form,
         disabled, actions,
-        actionName, actionsTop, showProgressBar, setShowProgressBar
+        actionName, actionsTop, showWaitAlert, setShowWaitAlert, waitAlertMessage
     } = props;
 
     const { formValues, formErrors, onChange, onSubmit, setFormValues, setFormErrors} = form;
@@ -217,14 +218,12 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         </React.Fragment>
     );
     return (
-        <BForm className="tf-form" onSubmit={onSubmit(submitCallback, setShowProgressBar)}>
+        <BForm className="tf-form" onSubmit={onSubmit(submitCallback, setShowWaitAlert)}>
             <fieldset disabled={!!disabled}>
             {actionsTop && <React.Fragment>{buttons}<hr/></React.Fragment>} 
             {
-                showProgressBar!=undefined && showProgressBar &&
-                <Alert color='light'>
-                    <ProgressBar text="Uploading File..."/>
-                </Alert>
+                showWaitAlert!=undefined && showWaitAlert &&
+                    <WaitAlert text={waitAlertMessage? waitAlertMessage: "Loading..."}/>
             }
             {
                 processedLayout.map((rows, i: number) => (

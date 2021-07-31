@@ -102,10 +102,11 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         (callback: (arg0: T) => void, setShowProgressBar?: ((x:boolean) => any) ) =>
         (ev: React.FormEvent<HTMLFormElement>) => {
             ev.preventDefault();
-            if(setShowProgressBar!= undefined) setShowProgressBar(true);
             const valid = validateAndSetErrors();
-            console.log("valid", valid);
             if (!valid) return;
+            
+            if(setShowProgressBar!= undefined) setShowProgressBar(true);
+
             // Filter form values only if display condition does not return false
             if (schema) {
                 const filtered = filterObject(
