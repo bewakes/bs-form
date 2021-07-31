@@ -58,6 +58,6 @@ export interface FileAttachments{
     currSelections: File[]
 }
 
-export type ProgressBarProps = {
+export type WaitAlertProps = {
     text: string;
 }

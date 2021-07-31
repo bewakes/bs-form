@@ -74,11 +74,11 @@ const uploadFile = (fileAttachments: B.FileAttachments, setShowProgressBar: (x: 
 // }
 
 const FileUploadComponent: React.FC = () => {
-    const [ showProgressBar, setShowProgressBar ] = React.useState(false);
+    const [ showWaitAlert, setShowWaitAlert ] = React.useState(false);
 
 	const onSubmit = (formValues: FileUpload) => { 
         console.log(formValues);
-        uploadFile(formValues.fileAttachments, setShowProgressBar);
+        uploadFile(formValues.fileAttachments, setShowWaitAlert);
     };
 
     const initialValues: FileUpload = {
@@ -102,8 +102,9 @@ const FileUploadComponent: React.FC = () => {
                     layout={layout}
                     submitCallback={onSubmit}
                     actionName="Check!"
-                    showProgressBar={showProgressBar}
-                    setShowProgressBar={setShowProgressBar}
+                    showWaitAlert={showWaitAlert}
+                    setShowWaitAlert={setShowWaitAlert}
+                    waitAlertMessage="Please wait..."
                 />
             </Col>
             <Col md="3" />
