@@ -15,7 +15,6 @@
 	padding: 5px;
 	margin: 10px;
 	border: 1px solid #888;
-	max-width: 80%;
 	top: 40%;
 	left: 50%;
 	transform: translate(-50%, -50%);
@@ -70,5 +69,11 @@
 	100%{
 		width: 100%;
 		left: 100%;
+	}
+}
+
+@media (max-width: 768px){
+ 	.custom-modal-content{
+		max-width: 80%;
 	}
 }
