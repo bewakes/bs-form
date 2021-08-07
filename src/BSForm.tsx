@@ -6,6 +6,7 @@ import { Errors, nestifyValues } from './useForm';
 import { parseFileName } from './utils';
 import './style.css';
 import { WaitAlert } from './WaitAlert';
+import CircularWaitAlert from './CircularWaitAlert';
 
 type FormProps<T> = {
     form: UseForm<T>;
@@ -20,6 +21,7 @@ type FormProps<T> = {
     }[];
     disabled?: boolean;
     actionsTop?: boolean; 
+    alertType?: "circular" | "linear";
     showWaitAlert?: boolean;
     setShowWaitAlert?: (x: boolean) => any;
     waitAlertMessage?: string;
@@ -182,7 +184,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
     const {
         submitCallback, layout, schema, form,
         disabled, actions,
-        actionName, actionsTop, showWaitAlert, setShowWaitAlert, waitAlertMessage
+        actionName, actionsTop, alertType="circular", showWaitAlert, setShowWaitAlert, waitAlertMessage
     } = props;
 
     const { formValues, formErrors, onChange, onSubmit, setFormValues, setFormErrors} = form;
@@ -222,8 +224,12 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
             <fieldset disabled={!!disabled}>
             {actionsTop && <React.Fragment>{buttons}<hr/></React.Fragment>} 
             {
-                showWaitAlert!=undefined && showWaitAlert &&
+                showWaitAlert!=undefined && showWaitAlert && alertType==="linear" &&
                     <WaitAlert text={waitAlertMessage? waitAlertMessage: "Loading..."}/>
+            }
+            {
+                showWaitAlert!=undefined && showWaitAlert && alertType==="circular" &&
+                    <CircularWaitAlert text={waitAlertMessage? waitAlertMessage: "Loading..."}/>
             }
             {
                 processedLayout.map((rows, i: number) => (
