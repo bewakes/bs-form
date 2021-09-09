@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
 
-import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow } from './types';
+import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow, Action } from './types';
 import { Errors, nestifyValues } from './useForm';
 import { parseFileName } from './utils';
 import './style.css';
@@ -12,13 +12,9 @@ type FormProps<T> = {
     form: UseForm<T>;
     schema: Schema<T>;
     layout: Layout<T>;
-    submitCallback: (elem: T) => void;
-    actionName: string;
-    actions?: {
-        name: string;
-        callback: (elem: T) => void;
-        color?: "primary" | "success" | "danger" | "warning";
-    }[];
+    submitCallback?: (elem: T) => void;
+    actionName?: string;
+    actions?: Action<T>[];
     disabled?: boolean;
     actionsTop?: boolean; 
     alertType?: "circular" | "linear";
@@ -41,7 +37,7 @@ interface WrappedInputProps<T> {
 function WrappedInput<T> (props: WrappedInputProps<T>) {
     const { name, schema, value, formValues, formErrors, onChange, setFormValues, setFormErrors, ...other } = props;
     const renderer = schema.valueRenderer || (x => x);
-    const renderValue = renderer(value);
+    let renderValue = renderer(value);
 
     const removeFileSelection = (index: number, selectionType: "currSelections"|"prevSelections") => {
             const updatedFileValues = formValues[name + "." + selectionType].filter((_: any, i:number) => i!=index);
@@ -161,6 +157,9 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         </FormGroup>
         );
     }
+    if(schema.type === "date" && renderValue && renderValue.length > 10){
+        renderValue = renderValue.substring(0, 10);
+    }
     return (
         <React.Fragment>
             <Label>
@@ -187,7 +186,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         actionName, actionsTop, alertType="circular", showWaitAlert, setShowWaitAlert, waitAlertMessage
     } = props;
 
-    const { formValues, formErrors, onChange, onSubmit, setFormValues, setFormErrors} = form;
+    const { formValues, formErrors, onChange, onSubmit, setFormValues, setFormErrors, validateAndSetErrors } = form;
     // TODO: use formErrors
     type FormType = typeof formValues;
 
@@ -210,7 +209,14 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                     key={action.name}
                     type="button"
                     color={action.color || "primary"}
-                    onClick={() => action.callback(formValues)}
+                    onClick={() => {
+                            if(action.custom && action.custom.method && (action.custom.method === "put" || action.custom.method === "post")) {
+                                const valid = validateAndSetErrors();
+                                if (!valid) return ;
+                            }
+                            action.callback(formValues, action)
+                        }
+                    }
                     style={{marginRight:'3px'}}
                 >
                     {action.name}
@@ -220,7 +226,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         </React.Fragment>
     );
     return (
-        <BForm className="tf-form" onSubmit={onSubmit(submitCallback, setShowWaitAlert)}>
+        <BForm className="tf-form" onSubmit={onSubmit(submitCallback? submitCallback: () => {}, setShowWaitAlert)}>
             <fieldset disabled={!!disabled}>
             {actionsTop && <React.Fragment>{buttons}<hr/></React.Fragment>} 
             {

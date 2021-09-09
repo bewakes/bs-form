@@ -168,6 +168,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         setFormValues,
         setFormErrors,
         setSchema,
-        setResetValues
+        setResetValues,
+        validateAndSetErrors
     } as UseForm<T>;
 };

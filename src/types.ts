@@ -35,6 +35,13 @@ export type SchemaSpec<T> = {
         parseFileName?: (fileURL: String) => String;
   });
 
+export interface Action<T> {
+    name: string;
+    custom?: {[key: string]: Object};
+    callback: (elem: T, action?: any) => void;
+    color?: "primary" | "success" | "danger" | "warning";
+}
+
 export type Schema<T> = {
     [K in keyof T]: SchemaSpec<T>;
 };
@@ -50,6 +57,7 @@ export interface UseForm<T> {
     setFormErrors: (a: T) => void;
     setResetValues: (a: T) => void;
     setSchema: (a: Schema<T>) => void;
+    validateAndSetErrors: Function;
     resetValues: T;
 }
 
