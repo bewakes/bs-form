@@ -99,14 +99,12 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
     const setFormValues = (x: any) => _setFormValues(flatifyValues(x));
 
     const onSubmit =
-        (callback: (arg0: T) => void, setShowProgressBar?: ((x:boolean) => any) ) =>
+        (callback: (arg0: T) => void ) =>
         (ev: React.FormEvent<HTMLFormElement>) => {
             ev.preventDefault();
             const valid = validateAndSetErrors();
             if (!valid) return;
             
-            if(setShowProgressBar!= undefined) setShowProgressBar(true);
-
             // Filter form values only if display condition does not return false
             if (schema) {
                 const filtered = filterObject(

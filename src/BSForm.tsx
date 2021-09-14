@@ -4,9 +4,6 @@ import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reacts
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow, Action } from './types';
 import { Errors, nestifyValues } from './useForm';
 import { parseFileName } from './utils';
-import './style.css';
-import { WaitAlert } from './WaitAlert';
-import CircularWaitAlert from './CircularWaitAlert';
 
 type FormProps<T> = {
     form: UseForm<T>;
@@ -183,7 +180,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
     const {
         submitCallback, layout, schema, form,
         disabled, actions,
-        actionName, actionsTop, alertType="circular", showWaitAlert, setShowWaitAlert, waitAlertMessage
+        actionName, actionsTop 
     } = props;
 
     const { formValues, formErrors, onChange, onSubmit, setFormValues, setFormErrors, validateAndSetErrors } = form;
@@ -210,7 +207,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                     type="button"
                     color={action.color || "primary"}
                     onClick={() => {
-                            if(action.custom && action.custom.method && (action.custom.method === "put" || action.custom.method === "post")) {
+                            if(action && action.custom && action.custom.method && (action.custom.method === "put" || action.custom.method === "post")) {
                                 const valid = validateAndSetErrors();
                                 if (!valid) return ;
                             }
@@ -226,17 +223,9 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         </React.Fragment>
     );
     return (
-        <BForm className="tf-form" onSubmit={onSubmit(submitCallback? submitCallback: () => {}, setShowWaitAlert)}>
+        <BForm className="tf-form" onSubmit={onSubmit(submitCallback? submitCallback: () => {})}>
             <fieldset disabled={!!disabled}>
             {actionsTop && <React.Fragment>{buttons}<hr/></React.Fragment>} 
-            {
-                showWaitAlert!=undefined && showWaitAlert && alertType==="linear" &&
-                    <WaitAlert text={waitAlertMessage? waitAlertMessage: "Loading..."}/>
-            }
-            {
-                showWaitAlert!=undefined && showWaitAlert && alertType==="circular" &&
-                    <CircularWaitAlert text={waitAlertMessage? waitAlertMessage: "Loading..."}/>
-            }
             {
                 processedLayout.map((rows, i: number) => (
                     <Row key={i}>

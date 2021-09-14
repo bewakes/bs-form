@@ -50,7 +50,7 @@ export interface UseForm<T> {
     formValues: T;
     formErrors: {[key in keyof T]: string};
     onChange: (name: keyof T, processor?: (v: any, formvals?: any) => any) => (ev: any) => void;
-    onSubmit: (callback: Function, setShowProgressBar: Function | undefined) => (ev: any) => void;
+    onSubmit: (callback: Function) => (ev: any) => void;
     resetForm: () => void;
     updateForm: (a: T) => void;
     setFormValues: (a: T) => void;
@@ -64,8 +64,4 @@ export interface UseForm<T> {
 export interface FileAttachments{
     prevSelections: String[],
     currSelections: File[]
-}
-
-export type WaitAlertProps = {
-    text: string;
 }
