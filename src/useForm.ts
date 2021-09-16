@@ -104,20 +104,12 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
             ev.preventDefault();
             const valid = validateAndSetErrors();
             if (!valid) return;
-            
+
             // Filter form values only if display condition does not return false
             if (schema) {
                 const filtered = filterObject(
                     formValues,
-                    (key: string, _: any) => {
-                        // eslint:disable-next-line
-                        return (
-                            schema === undefined ||
-                            schema[key as keyof T]?.displayCondition ===
-                                undefined ||
-                            schema[key].displayCondition(formValues)
-                        );
-                    }
+                    filterObjFunc
                 );
                 callback({ ...initvalues, ...nestifyValues(filtered) });
             } else {
@@ -128,6 +120,17 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
     const resetForm = () => {
         setFormValues(resetValues);
     };
+
+    const filterObjFunc = (key: string, _: any) => {
+        // eslint:disable-next-line
+        return (
+            schema === undefined ||
+            schema[key as keyof T]?.displayCondition ===
+                undefined || 
+            schema[key].displayCondition(formValues)
+        );
+    }
+
     return {
         formValues,
         formErrors,
@@ -167,6 +170,8 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         setFormErrors,
         setSchema,
         setResetValues,
-        validateAndSetErrors
+        validateAndSetErrors,
+        filterObjFunc,
+        initvalues
     } as UseForm<T>;
 };

@@ -3,7 +3,7 @@ import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reacts
 
 import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow, Action } from './types';
 import { Errors, nestifyValues } from './useForm';
-import { parseFileName } from './utils';
+import { parseFileName, filterObject } from './utils';
 
 type FormProps<T> = {
     form: UseForm<T>;
@@ -209,9 +209,23 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                     onClick={() => {
                             if(action && action.custom && action.custom.method && (action.custom.method === "put" || action.custom.method === "post")) {
                                 const valid = validateAndSetErrors();
+
                                 if (!valid) return ;
+
+                                if (schema) {
+                                    const filtered = filterObject(
+                                        formValues,
+                                        form.filterObjFunc
+                                    );
+                                    action.callback({ ...form.initvalues, ...nestifyValues(filtered) }, action);
+                                } else {
+                                    // eslint:disable-next-line
+                                    action.callback(nestifyValues(formValues), action); // TODO: gracefully handle nested type
+                                }
                             }
-                            action.callback(formValues, action)
+                            else{
+                                action.callback(formValues, action)
+                            }
                         }
                     }
                     style={{marginRight:'3px'}}

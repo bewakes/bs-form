@@ -58,6 +58,8 @@ export interface UseForm<T> {
     setResetValues: (a: T) => void;
     setSchema: (a: Schema<T>) => void;
     validateAndSetErrors: Function;
+    filterObjFunc: (k: string, _: any) => boolean;
+    initvalues: T;
     resetValues: T;
 }
 
