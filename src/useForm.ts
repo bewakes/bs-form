@@ -41,7 +41,7 @@ export const nestifyValues = (obj: { [key: string]: any }): any => {
     return nestedValues;
 };
 
-export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
+export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFieldChanged?: Function) => {
     // eslint:disable-next-line
     const [formValues, _setFormValues] = React.useState<T>(
         flatifyValues(initvalues)
@@ -53,7 +53,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
     const [formErrors, setFormErrors] = React.useState<Errors<T>>({});
     const [schema, setSchema] = React.useState<Schema<T> | undefined>(_schema);
     const [dirty, setDirty] = React.useState<T>({} as T);
-        
+    
     const validateAndSetErrors = () => {
         if (schema) {
             const errs = Object.entries(schema).reduce((acc, [key, value]) => {
@@ -161,6 +161,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
                     [name]: valProcessor(value, formValues)
                 });
                 setFormErrors({ ...formErrors, [name]: undefined });
+                onDependentFieldChanged && onDependentFieldChanged(name, {...formValues, [name]:valProcessor(value, formValues)});
             },
         onSubmit,
         updateForm: (newVal: T) => setFormValues(newVal),
@@ -172,6 +173,6 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>) => {
         setResetValues,
         validateAndSetErrors,
         filterObjFunc,
-        initvalues
+        initvalues,
     } as UseForm<T>;
 };
