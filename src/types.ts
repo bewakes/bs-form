@@ -19,6 +19,7 @@ export type SchemaSpec<T> = {
     label: string;
     required?: boolean;
     displayCondition?: (formVals: T) => boolean;
+    hideCondition?: (formVals: T) => boolean;
     validation?: Validation<T>;
     valueRenderer?: ValToVal;
     valueProcessor?: ValToVal;

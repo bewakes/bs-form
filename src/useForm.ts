@@ -123,11 +123,13 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
 
     const filterObjFunc = (key: string, _: any) => {
         // eslint:disable-next-line
+
         return (
             schema === undefined ||
-            schema[key as keyof T]?.displayCondition ===
-                undefined || 
-            schema[key].displayCondition(formValues)
+            (schema[key as keyof T]?.displayCondition ===
+                undefined && schema[key as keyof T]?.hideCondition === undefined) || 
+                (schema[key].displayCondition && schema[key].displayCondition(formValues))||
+                (schema[key].hideCondition && !schema[key].hideCondition(formValues))
         );
     }
 
