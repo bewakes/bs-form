@@ -113,7 +113,6 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
             ev.preventDefault();
             const valid = validateAndSetErrors();
             if (!valid) return;
-
             callback(getFilteredValues());
         };
     const resetForm = () => {
@@ -130,6 +129,15 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
             (dispCond && dispCond(formValues)) ||
             (hideCond && !hideCond(formValues))
         );
+    };
+
+    const setFormValue = (k: keyof T, v: any) => {
+        setFormValues({ ...formValues, [k]: v });
+        onDependentFieldChanged &&
+            onDependentFieldChanged(k, {
+                ...formValues,
+                [k]: v
+            });
     };
 
     return {
@@ -174,6 +182,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
         resetForm,
         resetValues,
         setFormValues,
+        setFormValue,
         setFormErrors,
         setSchema,
         getFilteredValues,
