@@ -58,6 +58,7 @@ export interface UseForm<T> {
     getFilteredValues: () => T;
     setFormErrors: (a: T) => void;
     setResetValues: (a: T) => void;
+    setFormValue: (k: keyof T, v: any) => void;
     setSchema: (a: Schema<T>) => void;
     validateAndSetErrors: Function;
     initvalues: T;
