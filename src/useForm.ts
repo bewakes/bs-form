@@ -53,7 +53,7 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
     const [formErrors, setFormErrors] = React.useState<Errors<T>>({});
     const [schema, setSchema] = React.useState<Schema<T> | undefined>(_schema);
     const [dirty, setDirty] = React.useState<T>({} as T);
-    
+
     const validateAndSetErrors = () => {
         if (schema) {
             const errs = Object.entries(schema).reduce((acc, [key, value]) => {
@@ -66,16 +66,16 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
                 const fieldValidation = validationAnd(
                     requiredValidation,
                     explicitValidation as Validation<T>
-                ); 
+                );
 
                 let validation;
-                if((value as SchemaSpec<T>).type === 'file'){
+                if ((value as SchemaSpec<T>).type === 'file') {
+                    const formValuesNested = nestifyValues(formValues);
                     validation = fieldValidation(
-                        nestifyValues(formValues)[key as keyof T],
-                        nestifyValues(formValues)
-                    )
-                }
-                else{
+                        formValuesNested[key as keyof T],
+                        formValuesNested
+                    );
+                } else {
                     validation = fieldValidation(
                         formValues[key as keyof T],
                         formValues
@@ -98,40 +98,39 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
     // eslint:disable-next-line
     const setFormValues = (x: any) => _setFormValues(flatifyValues(x));
 
+    const getFilteredValues = () => {
+        if (schema) {
+            const filtered = filterObject(formValues, isFieldNotHidden);
+            return { ...initvalues, ...nestifyValues(filtered) };
+        } else {
+            return { ...initvalues, ...nestifyValues(formValues) };
+        }
+    };
+
     const onSubmit =
-        (callback: (arg0: T) => void ) =>
+        (callback: (arg0: T) => void) =>
         (ev: React.FormEvent<HTMLFormElement>) => {
             ev.preventDefault();
             const valid = validateAndSetErrors();
             if (!valid) return;
 
-            // Filter form values only if display condition does not return false
-            if (schema) {
-                const filtered = filterObject(
-                    formValues,
-                    filterObjFunc
-                );
-                callback({ ...initvalues, ...nestifyValues(filtered) });
-            } else {
-                // eslint:disable-next-line
-                callback(nestifyValues(formValues)); // TODO: gracefully handle nested type
-            }
+            callback(getFilteredValues());
         };
     const resetForm = () => {
         setFormValues(resetValues);
     };
 
-    const filterObjFunc = (key: string, _: any) => {
+    const isFieldNotHidden = (key: string, _: any) => {
         // eslint:disable-next-line
-
-        return (
+        const dispCond = schema && schema[key as keyof T]?.displayCondition;
+        const hideCond = schema && schema[key as keyof T]?.hideCondition;
+        return !!(
             schema === undefined ||
-            (schema[key as keyof T]?.displayCondition ===
-                undefined && schema[key as keyof T]?.hideCondition === undefined) || 
-                (schema[key].displayCondition && schema[key].displayCondition(formValues))||
-                (schema[key].hideCondition && !schema[key].hideCondition(formValues))
+            (dispCond === undefined && hideCond === undefined) ||
+            (dispCond && dispCond(formValues)) ||
+            (hideCond && !hideCond(formValues))
         );
-    }
+    };
 
     return {
         formValues,
@@ -140,18 +139,19 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
             (name: keyof T, valueProcessor?: (_: any, formVals: any) => any) =>
             (ev: React.FormEvent<HTMLInputElement>) => {
                 let value: any = ev.currentTarget.value;
-                if(ev.currentTarget.type === "checkbox"){
+                if (ev.currentTarget.type === 'checkbox') {
                     value = ev.currentTarget.checked;
                 }
-                if(ev.currentTarget.type === "file"){
-                    name = (name + ".currSelections") as keyof T;
-                    const currentSelected = Array.from(ev.currentTarget.files as FileList);
-                    if(!(name in formValues)){
+                if (ev.currentTarget.type === 'file') {
+                    name = (name + '.currSelections') as keyof T;
+                    const currentSelected = Array.from(
+                        ev.currentTarget.files as FileList
+                    );
+                    if (!(name in formValues)) {
                         value = currentSelected;
-                    }
-                    else{
+                    } else {
                         value = [...formValues[name as string]];
-                        for(let file of currentSelected){
+                        for (const file of currentSelected) {
                             value.push(file);
                         }
                     }
@@ -163,7 +163,11 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
                     [name]: valProcessor(value, formValues)
                 });
                 setFormErrors({ ...formErrors, [name]: undefined });
-                onDependentFieldChanged && onDependentFieldChanged(name, {...formValues, [name]:valProcessor(value, formValues)});
+                onDependentFieldChanged &&
+                    onDependentFieldChanged(name, {
+                        ...formValues,
+                        [name]: valProcessor(value, formValues)
+                    });
             },
         onSubmit,
         updateForm: (newVal: T) => setFormValues(newVal),
@@ -172,9 +176,9 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
         setFormValues,
         setFormErrors,
         setSchema,
+        getFilteredValues,
         setResetValues,
         validateAndSetErrors,
-        filterObjFunc,
-        initvalues,
+        initvalues
     } as UseForm<T>;
 };

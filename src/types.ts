@@ -55,11 +55,11 @@ export interface UseForm<T> {
     resetForm: () => void;
     updateForm: (a: T) => void;
     setFormValues: (a: T) => void;
+    getFilteredValues: () => T;
     setFormErrors: (a: T) => void;
     setResetValues: (a: T) => void;
     setSchema: (a: Schema<T>) => void;
     validateAndSetErrors: Function;
-    filterObjFunc: (k: string, _: any) => boolean;
     initvalues: T;
     resetValues: T;
 }
