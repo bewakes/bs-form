@@ -1,8 +1,8 @@
 import React from 'react';
 import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
 
-import { Layout, UseForm, Schema, SchemaSpec, LayoutElement, ProcessedLayoutRow, Action } from './types';
-import { Errors, nestifyValues } from './useForm';
+import { Layout, UseForm, Schema, LayoutElement, ProcessedLayoutRow, Action, WrappedInputProps } from './types';
+import { nestifyValues } from './useForm';
 import { parseFileName } from './utils';
 
 type FormProps<T> = {
@@ -19,17 +19,6 @@ type FormProps<T> = {
     setShowWaitAlert?: (x: boolean) => any;
     waitAlertMessage?: string;
 };
-
-interface WrappedInputProps<T> {
-    name: keyof T; // TODO: make this generic
-    onChange: (ev: React.FormEvent<HTMLInputElement>) => void;
-    schema: SchemaSpec<T>;
-    value: any;
-    formValues: T;
-    formErrors?: Errors<T>;
-    setFormValues: (x: any) => any;
-    setFormErrors: (x: any) => any;
-}
 
 function WrappedInput<T> (props: WrappedInputProps<T>) {
     const { name, schema, value, formValues, formErrors, onChange, setFormValues, setFormErrors, ...other } = props;
@@ -105,6 +94,20 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             <h5 style={{ marginBottom: '-8px', marginTop: '8px' }}>
                 {schema.label}
             </h5>
+        );
+    }
+    if (schema.type === 'custom') {
+        const {CustomComponent} = schema;
+        return (
+            <FormGroup>
+                <Label style={{ display: 'block' }}>
+                    {schema.label}
+                    <small className="input-error">
+                        {formErrors && formErrors[name]}
+                    </small>
+                </Label>
+                <CustomComponent {...props}/>
+            </FormGroup>
         );
     }
     if (schema.type === 'file') {
