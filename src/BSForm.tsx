@@ -106,7 +106,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                         {formErrors && formErrors[name]}
                     </small>
                 </Label>
-                <CustomComponent {...props}/>
+                <CustomComponent schema={schema} name={name} bsFormOnChange={onChange}/>
             </FormGroup>
         );
     }

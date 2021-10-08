@@ -144,13 +144,13 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
         formValues,
         formErrors,
         onChange:
-            (name: keyof T, valueProcessor?: (_: any, formVals: any) => any) =>
-            (ev: React.FormEvent<HTMLInputElement>) => {
-                let value: any = ev.currentTarget.value;
-                if (ev.currentTarget.type === 'checkbox') {
+            (name: keyof T, valueProcessor?: (_: any, formVals: any) => any) => 
+            (ev: React.FormEvent<HTMLInputElement>, customValue?: any) => {
+                let value: any = customValue || ev?.currentTarget?.value ;
+                if (ev?.currentTarget?.type === 'checkbox') {
                     value = ev.currentTarget.checked;
                 }
-                if (ev.currentTarget.type === 'file') {
+                if (ev?.currentTarget?.type === 'file') {
                     name = (name + '.currSelections') as keyof T;
                     const currentSelected = Array.from(
                         ev.currentTarget.files as FileList
