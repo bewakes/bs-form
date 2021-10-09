@@ -18,7 +18,6 @@ type FormProps<T> = {
     showWaitAlert?: boolean;
     setShowWaitAlert?: (x: boolean) => any;
     waitAlertMessage?: string;
-    extra: Object;
 };
 
 function WrappedInput<T> (props: WrappedInputProps<T>) {
@@ -31,10 +30,6 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         onChange, 
         setFormValues, 
         setFormErrors, 
-        datasetId, 
-        schema, 
-        setSchema, 
-        setNotification, 
         ...other } = props;
 
     const renderer = field.valueRenderer || (x => x);
@@ -123,13 +118,10 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                     </small>
                 </Label>
                 <CustomComponent 
-                    field={field} name={name} 
+                    field={field} 
+                    name={name} 
                     value={renderValue}
                     bsFormOnChange={onChange} 
-                    datasetId={datasetId} 
-                    setNotification={setNotification} 
-                    schema={schema}
-                    setSchema={setSchema} 
                 />
             </FormGroup>
         );
@@ -237,7 +229,6 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         actions,
         actionName,
         actionsTop,
-        extra
     } = props;
 
     const {
@@ -247,7 +238,6 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         onSubmit,
         setFormValues,
         setFormErrors,
-        setSchema,
         validateAndSetErrors
     } = form;
     // TODO: use formErrors
@@ -309,7 +299,6 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                             <FormGroup>
                                 <WrappedInput<FormType>
                                     field={schema[fieldName as (keyof FormType)]}
-                                    schema={schema}
                                     name={fieldName}
                                     value={formValues[fieldName as (keyof FormType)]}
                                     onChange={onChange(fieldName, schema[fieldName as (keyof FormType)].valueProcessor, schema[fieldName as (keyof FormType)].type === 'custom')}
@@ -317,8 +306,6 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                                     setFormValues={setFormValues}
                                     setFormErrors={setFormErrors}
                                     formErrors={formErrors}
-                                    setSchema={setSchema}
-                                    {...extra}
                                 />
                             </FormGroup>
                         </Col>
