@@ -124,6 +124,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 </Label>
                 <CustomComponent 
                     field={field} name={name} 
+                    value={renderValue}
                     bsFormOnChange={onChange} 
                     datasetId={datasetId} 
                     setNotification={setNotification} 
