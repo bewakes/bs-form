@@ -18,11 +18,26 @@ type FormProps<T> = {
     showWaitAlert?: boolean;
     setShowWaitAlert?: (x: boolean) => any;
     waitAlertMessage?: string;
+    extra: Object;
 };
 
 function WrappedInput<T> (props: WrappedInputProps<T>) {
-    const { name, schema, value, formValues, formErrors, onChange, setFormValues, setFormErrors, ...other } = props;
-    const renderer = schema.valueRenderer || (x => x);
+    const { 
+        name, 
+        field, 
+        value, 
+        formValues, 
+        formErrors, 
+        onChange, 
+        setFormValues, 
+        setFormErrors, 
+        datasetId, 
+        schema, 
+        setSchema, 
+        setNotification, 
+        ...other } = props;
+
+    const renderer = field.valueRenderer || (x => x);
     let renderValue = renderer(value);
 
     const removeFileSelection = (index: number, selectionType: "currSelections"|"prevSelections") => {
@@ -30,7 +45,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         const updatedFormValues = { ...formValues, [name + "." + selectionType]: updatedFileValues };
         setFormValues(updatedFormValues);
 
-        const err = schema.validation ? schema.validation(nestifyValues(updatedFormValues)[name], updatedFormValues): undefined;
+        const err = field.validation ? field.validation(nestifyValues(updatedFormValues)[name], updatedFormValues): undefined;
 
         if (typeof err === 'string') {
             setFormErrors({ ...formErrors, [name]: err });
@@ -41,16 +56,16 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             }
         }
     }
-    if ((schema.displayCondition && !schema.displayCondition(formValues)) ||
-        (schema.hideCondition && schema.hideCondition(formValues))) {
+    if ((field.displayCondition && !field.displayCondition(formValues)) ||
+        (field.hideCondition && field.hideCondition(formValues))) {
         return null;
     }
-    if (schema.type === 'select') {
+    if (field.type === 'select') {
         return (
             <React.Fragment>
                 <Label>
-                    {schema.label}
-                    {schema.required && <span className="input-error">*</span>}
+                    {field.label}
+                    {field.required && <span className="input-error">*</span>}
                     <small className="input-error">
                         {formErrors && formErrors[name]}
                     </small>
@@ -63,7 +78,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                     onChange={onChange}
                     {...other}
                 >
-                    {(schema.options || []).map((x) => (
+                    {(field.options || []).map((x) => (
                         <option key={x.value} value={x.value}>
                             {x.label}
                         </option>
@@ -72,7 +87,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             </React.Fragment>
         );
     }
-    if (schema.type === 'checkbox') {
+    if (field.type === 'checkbox') {
         return (
             <FormGroup check>
                 <Label check>
@@ -83,41 +98,49 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                         onChange={onChange}
                         {...other}
                     />{' '}
-                    {schema.label}
-                    {schema.required && <span className="input-error">*</span>}
+                    {field.label}
+                    {field.required && <span className="input-error">*</span>}
                 </Label>
             </FormGroup>
         );
     }
-    if (schema.type === 'label') {
+    if (field.type === 'label') {
         return (
             <h5 style={{ marginBottom: '-8px', marginTop: '8px' }}>
-                {schema.label}
+                {field.label}
             </h5>
         );
     }
-    if (schema.type === 'custom') {
-        const {CustomComponent} = schema;
+    if (field.type === 'custom') {
+        const {CustomComponent} = field;
         return (
             <FormGroup>
-                <Label style={{ display: 'block' }}>
-                    {schema.label}
+                 <Label>
+                    {field.label}
+                    {field.required && <span className="input-error">*</span>}
                     <small className="input-error">
                         {formErrors && formErrors[name]}
                     </small>
                 </Label>
-                <CustomComponent schema={schema} name={name} bsFormOnChange={onChange}/>
+                <CustomComponent 
+                    field={field} name={name} 
+                    bsFormOnChange={onChange} 
+                    datasetId={datasetId} 
+                    setNotification={setNotification} 
+                    schema={schema}
+                    setSchema={setSchema} 
+                />
             </FormGroup>
         );
     }
-    if (schema.type === 'file') {
-        const mParseFileName = schema.parseFileName
-            ? schema.parseFileName
+    if (field.type === 'file') {
+        const mParseFileName = field.parseFileName
+            ? field.parseFileName
             : parseFileName;
         return (
             <FormGroup>
                 <Label style={{ display: 'block' }}>
-                    {schema.label}
+                    {field.label}
                     <small className="input-error">
                         {formErrors && formErrors[name]}
                     </small>
@@ -126,7 +149,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                     type="file"
                     name={name as string}
                     multiple
-                    accept={schema.allowedFileExtensions || '*'}
+                    accept={field.allowedFileExtensions || '*'}
                     onChange={onChange}
                     {...other}
                     style={{ display: 'none' }}
@@ -178,14 +201,14 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             </FormGroup>
         );
     }
-    if (schema.type === 'date' && renderValue && renderValue.length > 10) {
+    if (field.type === 'date' && renderValue && renderValue.length > 10) {
         renderValue = renderValue.substring(0, 10);
     }
     return (
         <React.Fragment>
             <Label>
-                {schema.label}
-                {schema.required && <span className="input-error">*</span>}
+                {field.label}
+                {field.required && <span className="input-error">*</span>}
                 <small className="input-error">
                     {formErrors && formErrors[name]}
                 </small>
@@ -193,8 +216,8 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             <Input
                 name={name as string}
                 value={renderValue}
-                type={schema.type}
-                placeholder={schema.placeholder}
+                type={field.type}
+                placeholder={field.placeholder}
                 invalid={!!(formErrors && formErrors[name])}
                 onChange={onChange}
                 {...other}
@@ -212,7 +235,8 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         disabled,
         actions,
         actionName,
-        actionsTop
+        actionsTop,
+        extra
     } = props;
 
     const {
@@ -222,6 +246,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         onSubmit,
         setFormValues,
         setFormErrors,
+        setSchema,
         validateAndSetErrors
     } = form;
     // TODO: use formErrors
@@ -282,14 +307,17 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                         <Col md={width} key={fieldName as string}>
                             <FormGroup>
                                 <WrappedInput<FormType>
-                                    schema={schema[fieldName as (keyof FormType)]}
+                                    field={schema[fieldName as (keyof FormType)]}
+                                    schema={schema}
                                     name={fieldName}
                                     value={formValues[fieldName as (keyof FormType)]}
-                                    onChange={onChange(fieldName, schema[fieldName as (keyof FormType)].valueProcessor)}
+                                    onChange={onChange(fieldName, schema[fieldName as (keyof FormType)].valueProcessor, schema[fieldName as (keyof FormType)].type === 'custom')}
                                     formValues={formValues}
                                     setFormValues={setFormValues}
                                     setFormErrors={setFormErrors}
                                     formErrors={formErrors}
+                                    setSchema={setSchema}
+                                    {...extra}
                                 />
                             </FormGroup>
                         </Col>
