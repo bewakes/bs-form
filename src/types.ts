@@ -4,7 +4,7 @@ export type ValToVal = (v: any, formvals?: any) => any;
 export type LayoutElement<T> = keyof T | Array<keyof T>;
 export type Layout<T> = Array<LayoutElement<T>>[];
 export type ProcessedLayoutRow<T> = Array<[keyof T, number]>;
-export type NonSelect = "number" | "text" | "date" |  "email" | "password" | "textarea" | "checkbox" | "time" | "label" | "custom";
+export type NonSelect = "number" | "text" | "date" |  "email" | "password" | "textarea" | "checkbox" | "time" | "label" ;
 export type Option = { label: string; value: string | number };
 
 export type InputType = "select" | "file" | NonSelect;
@@ -24,7 +24,6 @@ export type SchemaSpec<T> = {
     validation?: Validation<T>;
     valueRenderer?: ValToVal;
     valueProcessor?: ValToVal;
-    CustomComponent?: any;
     placeholder?: string;
 } & ({
     type: NonSelect; }
@@ -36,12 +35,12 @@ export type SchemaSpec<T> = {
         type: "file";
         allowedFileExtensions?: string;
         parseFileName?: (fileURL: String) => String;
+  }
+  |{
+        type: "custom";
+        CustomComponent: any;
   });
   
-export type Extra = {
-    [key: string]: string | number;
-}
-
 export interface WrappedInputProps<T> {
     name: keyof T; // TODO: make this generic
     onChange: (ev: React.FormEvent<HTMLInputElement>) => void;
@@ -49,13 +48,8 @@ export interface WrappedInputProps<T> {
     value: any;
     formValues: T;
     formErrors?: Errors<T>;
-    CustomComponent?: any;
     setFormValues: (x: any) => any;
     setFormErrors: (x: any) => any;
-    schema: Object;
-    datasetId?: string | number; // make this interface extend Extra
-    setNotification?: Function;
-    setSchema?: Function;
 }
 
 export interface Action<T> {
