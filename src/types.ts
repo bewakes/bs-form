@@ -1,9 +1,10 @@
+import { Errors } from './useForm';
 export type ValToVal = (v: any, formvals?: any) => any;
 
 export type LayoutElement<T> = keyof T | Array<keyof T>;
 export type Layout<T> = Array<LayoutElement<T>>[];
 export type ProcessedLayoutRow<T> = Array<[keyof T, number]>;
-export type NonSelect = "number" | "text" | "date" |  "email" | "password" | "textarea" | "checkbox" | "time" | "label";
+export type NonSelect = "number" | "text" | "date" |  "email" | "password" | "textarea" | "checkbox" | "time" | "label" | "custom";
 export type Option = { label: string; value: string | number };
 
 export type InputType = "select" | "file" | NonSelect;
@@ -23,6 +24,7 @@ export type SchemaSpec<T> = {
     validation?: Validation<T>;
     valueRenderer?: ValToVal;
     valueProcessor?: ValToVal;
+    CustomComponent?: any;
     placeholder?: string;
 } & ({
     type: NonSelect; }
@@ -35,6 +37,26 @@ export type SchemaSpec<T> = {
         allowedFileExtensions?: string;
         parseFileName?: (fileURL: String) => String;
   });
+  
+export type Extra = {
+    [key: string]: string | number;
+}
+
+export interface WrappedInputProps<T> {
+    name: keyof T; // TODO: make this generic
+    onChange: (ev: React.FormEvent<HTMLInputElement>) => void;
+    field: SchemaSpec<T>;
+    value: any;
+    formValues: T;
+    formErrors?: Errors<T>;
+    CustomComponent?: any;
+    setFormValues: (x: any) => any;
+    setFormErrors: (x: any) => any;
+    schema: Object;
+    datasetId?: string | number; // make this interface extend Extra
+    setNotification?: Function;
+    setSchema?: Function;
+}
 
 export interface Action<T> {
     name: string;
@@ -50,7 +72,7 @@ export type Schema<T> = {
 export interface UseForm<T> {
     formValues: T;
     formErrors: {[key in keyof T]: string};
-    onChange: (name: keyof T, processor?: (v: any, formvals?: any) => any) => (ev: any) => void;
+    onChange: (name: keyof T, processor?: (v: any, formvals?: any) => any, customField?: boolean) => (ev: any) => void;
     onSubmit: (callback: Function) => (ev: any) => void;
     resetForm: () => void;
     updateForm: (a: T) => void;

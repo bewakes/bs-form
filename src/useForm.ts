@@ -144,9 +144,9 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
         formValues,
         formErrors,
         onChange:
-            (name: keyof T, valueProcessor?: (_: any, formVals: any) => any) => 
+            (name: keyof T, valueProcessor?: (_: any, formVals: any) => any, customField?: false) => 
             (ev: React.FormEvent<HTMLInputElement>, customValue?: any) => {
-                let value: any = customValue || ev?.currentTarget?.value ;
+                let value: any = customField ? customValue : ev?.currentTarget?.value ;
                 if (ev?.currentTarget?.type === 'checkbox') {
                     value = ev.currentTarget.checked;
                 }
