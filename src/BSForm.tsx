@@ -117,11 +117,15 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                         {formErrors && formErrors[name]}
                     </small>
                 </Label>
-                <CustomComponent 
-                    field={field} 
-                    name={name} 
+                <CustomComponent
+                    field={field}
+                    name={name}
                     value={renderValue}
-                    bsFormOnChange={onChange} 
+                    onChange={onChange}
+                    formErrors={formErrors}
+                    setFormValues={setFormValues}
+                    formValues={formValues}
+                    setFormErrors={setFormErrors}
                 />
             </FormGroup>
         );

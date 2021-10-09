@@ -1,3 +1,4 @@
+import React from 'react';
 import { Errors } from './useForm';
 export type ValToVal = (v: any, formvals?: any) => any;
 
@@ -38,7 +39,7 @@ export type SchemaSpec<T> = {
   }
   |{
         type: "custom";
-        CustomComponent: any;
+        CustomComponent: React.FC<WrappedInputProps<T>>;
   });
   
 export interface WrappedInputProps<T> {
@@ -66,7 +67,7 @@ export type Schema<T> = {
 export interface UseForm<T> {
     formValues: T;
     formErrors: {[key in keyof T]: string};
-    onChange: (name: keyof T, processor?: (v: any, formvals?: any) => any, customField?: boolean) => (ev: any) => void;
+    onChange: (name: keyof T, processor?: (v: any, formvals?: T) => any, customField?: boolean) => (ev: any) => void;
     onSubmit: (callback: Function) => (ev: any) => void;
     resetForm: () => void;
     updateForm: (a: T) => void;
