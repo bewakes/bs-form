@@ -51,13 +51,20 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
             }
         }
     }
-    if ((field.displayCondition && !field.displayCondition(formValues)) ||
-        (field.hideCondition && field.hideCondition(formValues))) {
+
+    const shouldDisplay = () => {
+        if ((field.displayCondition && !field.displayCondition(formValues)) ||
+            (field.hideCondition && field.hideCondition(formValues))) return false;
+        return true;
+    }
+
+    if(!shouldDisplay()){
         return null;
     }
+
     if (field.type === 'select') {
         return (
-            <React.Fragment>
+            <FormGroup>
                 <Label>
                     {field.label}
                     {field.required && <span className="input-error">*</span>}
@@ -79,7 +86,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                         </option>
                     ))}
                 </Input>
-            </React.Fragment>
+            </FormGroup>
         );
     }
     if (field.type === 'checkbox') {
@@ -101,9 +108,11 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
     }
     if (field.type === 'label') {
         return (
-            <h5 style={{ marginBottom: '-8px', marginTop: '8px' }}>
-                {field.label}
-            </h5>
+            <FormGroup>
+                <h5 style={{ marginBottom: '-8px', marginTop: '8px' }}>
+                    {field.label}
+                </h5>
+            </FormGroup>
         );
     }
     if (field.type === 'custom') {
@@ -202,7 +211,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         renderValue = renderValue.substring(0, 10);
     }
     return (
-        <React.Fragment>
+        <FormGroup>
             <Label>
                 {field.label}
                 {field.required && <span className="input-error">*</span>}
@@ -219,7 +228,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 onChange={onChange}
                 {...other}
             />
-        </React.Fragment>
+        </FormGroup>
     );
 };
 
@@ -244,6 +253,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
         setFormErrors,
         validateAndSetErrors
     } = form;
+
     // TODO: use formErrors
     type FormType = typeof formValues;
 
@@ -300,18 +310,16 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                 <Row key={i}>
                 {rows.map(([fieldName, width]: [any, number]) => (
                         <Col md={width} key={fieldName as string}>
-                            <FormGroup>
-                                <WrappedInput<FormType>
-                                    field={schema[fieldName as (keyof FormType)]}
-                                    name={fieldName}
-                                    value={formValues[fieldName as (keyof FormType)]}
-                                    onChange={onChange(fieldName, schema[fieldName as (keyof FormType)].valueProcessor, schema[fieldName as (keyof FormType)].type === 'custom')}
-                                    formValues={formValues}
-                                    setFormValues={setFormValues}
-                                    setFormErrors={setFormErrors}
-                                    formErrors={formErrors}
-                                />
-                            </FormGroup>
+                            <WrappedInput<FormType>
+                                field={schema[fieldName as (keyof FormType)]}
+                                name={fieldName}
+                                value={formValues[fieldName as (keyof FormType)]}
+                                onChange={onChange(fieldName, schema[fieldName as (keyof FormType)].valueProcessor, schema[fieldName as (keyof FormType)].type === 'custom')}
+                                formValues={formValues}
+                                setFormValues={setFormValues}
+                                setFormErrors={setFormErrors}
+                                formErrors={formErrors}
+                            />
                         </Col>
                     ))}
                 </Row>
