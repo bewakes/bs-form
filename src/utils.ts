@@ -1,8 +1,4 @@
-import {
-    Validation,
-    DisplayCondition,
-    FileAttachments,
-} from './types';
+import { Validation, DisplayCondition, FileAttachments, } from './types';
 
 export const validationOr = (...validationFuncs: Validation<any>[]) => (val: any, formValues: any) => {
     let invalids = [];
@@ -80,4 +76,39 @@ export const filterObject = (obj: any, f: (k: string, v: any) => boolean) => {
         (acc, key) => f(key, obj[key]) ? ({...acc, [key]: obj[key] }) : acc,
         {}
     );
+};
+
+export const flatifyValues = (obj: any): any => {
+    const flatVals: { [key: string]: any } = {};
+    Object.entries(obj).forEach(([k, v]: any[]) => {
+        if (v && v.constructor === Object) {
+            const flatified = flatifyValues(v);
+            Object.entries(flatified).forEach(([kk, vv]) => {
+                flatVals[k + '.' + kk] = vv;
+            });
+        } else {
+            flatVals[k] = v;
+        }
+    });
+    return flatVals;
+};
+
+export const nestifyValues = (obj: { [key: string]: any }): any => {
+    // NOTE: this function does heavy mutation
+    const nestedValues: { [key: string]: any } = {};
+    Object.entries(obj).forEach(([k, v]) => {
+        const splitted = k.split('.');
+        if (splitted.length === 1) {
+            nestedValues[k] = v;
+        } else {
+            let latestObj = nestedValues;
+            splitted.slice(0, splitted.length - 1).forEach((kk) => {
+                const tmp = latestObj[kk] || {};
+                latestObj[kk] = tmp;
+                latestObj = tmp;
+            });
+            latestObj[splitted[splitted.length - 1]] = v;
+        }
+    });
+    return nestedValues;
 };

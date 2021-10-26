@@ -2,8 +2,7 @@ import React from 'react';
 import { Row, Col, Form as BForm, Input, Label, FormGroup, Button } from 'reactstrap';
 
 import { Layout, UseForm, Schema, LayoutElement, ProcessedLayoutRow, Action, WrappedInputProps } from './types';
-import { nestifyValues } from './useForm';
-import { parseFileName } from './utils';
+import { parseFileName, nestifyValues } from './utils';
 
 type FormProps<T> = {
     form: UseForm<T>;
@@ -284,9 +283,9 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                     type="button"
                     color={action.color || 'primary'}
                     onClick={() => {
+                        const valid = validateAndSetErrors();
+                        if (!valid) return;
                         if (action && action.custom && action.custom.method && (action.custom.method === "put" || action.custom.method === "post")) {
-                            const valid = validateAndSetErrors();
-                            if (!valid) return;
                             action.callback(form.getFilteredValues(), action);
                         } else {
                             action.callback(formValues, action)
