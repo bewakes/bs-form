@@ -44,7 +44,7 @@ export type SchemaSpec<T> = {
   
 export interface WrappedInputProps<T> {
     name: keyof T; // TODO: make this generic
-    onChange: (ev: React.FormEvent<HTMLInputElement>) => void;
+    onChange: (ev: React.FormEvent<HTMLInputElement>, _?: any) => void;
     field: SchemaSpec<T>;
     value: any;
     formValues: T;
