@@ -58,6 +58,7 @@ export interface Action<T> {
     custom?: {[key: string]: Object};
     callback: (elem: T, action?: any) => void;
     color?: "primary" | "success" | "danger" | "warning";
+    validateData?: boolean;
 }
 
 export type Schema<T> = {

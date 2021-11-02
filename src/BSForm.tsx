@@ -283,7 +283,7 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                     type="button"
                     color={action.color || 'primary'}
                     onClick={() => {
-                        const valid = validateAndSetErrors();
+                        const valid = action.validateData === false ? true : validateAndSetErrors();
                         if (!valid) return;
                         if (action && action.custom && action.custom.method && (action.custom.method === "put" || action.custom.method === "post")) {
                             action.callback(form.getFilteredValues(), action);
