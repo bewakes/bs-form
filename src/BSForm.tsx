@@ -54,7 +54,8 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
 
     const shouldDisplay = () => {
         if ((field.displayCondition && !field.displayCondition(formValues)) ||
-            (field.hideCondition && field.hideCondition(formValues))) return false;
+            (field.hideCondition && field.hideCondition(formValues)) ||
+             field.hidden) return false;
         return true;
     }
 
@@ -119,17 +120,20 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         const {CustomComponent} = field;
         return (
             <FormGroup>
-                 <Label>
-                    {field.label}
-                    {field.required && <span className="input-error">*</span>}
-                    <small className="input-error">
-                        {formErrors && formErrors[name]}
-                    </small>
-                </Label>
+                {
+                    field.showLabel &&
+                    <Label>
+                        {field.label}
+                        {field.required && <span className="input-error">*</span>}
+                        <small className="input-error">
+                            {formErrors && formErrors[name]}
+                        </small>
+                    </Label>
+                }
                 <CustomComponent
                     field={field}
                     name={name}
-                    value={renderValue}
+                    value={field.showLabel ? renderValue : field.label}
                     onChange={onChange}
                     formErrors={formErrors}
                     setFormValues={setFormValues}

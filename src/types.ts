@@ -26,6 +26,7 @@ export type SchemaSpec<T> = {
     valueRenderer?: ValToVal;
     valueProcessor?: ValToVal;
     placeholder?: string;
+    hidden?: boolean;
 } & ({
     type: NonSelect; }
   | {
@@ -40,6 +41,7 @@ export type SchemaSpec<T> = {
   |{
         type: "custom";
         CustomComponent: React.FC<WrappedInputProps<T>>;
+        showLabel: boolean;
   });
   
 export interface WrappedInputProps<T> {
