@@ -80,8 +80,8 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                     onChange={onChange}
                     {...other}
                 >
-                    {(field.options || []).map((x) => (
-                        <option key={x.value} value={x.value}>
+                    {(field.options || []).map((x, i) => (
+                        <option key={i} value={x.value}>
                             {x.label}
                         </option>
                     ))}
