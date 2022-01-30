@@ -12,7 +12,7 @@ export type Errors<T> = {
     [K in keyof T]?: string;
 };
 
-export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFieldChanged?: Function) => {
+export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onFieldValueChanged?: Function) => {
     // eslint:disable-next-line
     const [formValues, _setFormValues] = React.useState<T>(
         flatifyValues(initvalues)
@@ -104,8 +104,8 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
 
     const setFormValue = (k: keyof T, v: any) => {
         setFormValues({ ...formValues, [k]: v });
-        onDependentFieldChanged &&
-            onDependentFieldChanged(k, {
+        onFieldValueChanged &&
+            onFieldValueChanged(k, {
                 ...formValues,
                 [k]: v
             });
@@ -142,8 +142,8 @@ export const useForm = <T>(initvalues: T, _schema?: Schema<any>, onDependentFiel
                     [name]: valProcessor(value, formValues)
                 });
                 setFormErrors({ ...formErrors, [name]: undefined });
-                onDependentFieldChanged &&
-                    onDependentFieldChanged(name, {
+                onFieldValueChanged &&
+                    onFieldValueChanged(name, {
                         ...formValues,
                         [name]: valProcessor(value, formValues)
                     });

@@ -289,6 +289,8 @@ const Form: <T>(_: FormProps<T>) => React.ReactElement<FormProps<T>> = (props) =
                     onClick={() => {
                         const valid = action.validateData === false ? true : validateAndSetErrors();
                         if (!valid) return;
+
+                        // TODO: Remove the method check, and else condition later.
                         if (action && action.custom && action.custom.method && (action.custom.method === "put" || action.custom.method === "post")) {
                             action.callback(form.getFilteredValues(), action);
                         } else {
