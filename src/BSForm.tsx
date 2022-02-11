@@ -132,7 +132,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 <CustomComponent
                     field={field}
                     name={name}
-                    value={field.showLabel ? renderValue : field.label}
+                    value={ renderValue }
                     onChange={onChange}
                     formErrors={formErrors}
                     setFormValues={setFormValues}
