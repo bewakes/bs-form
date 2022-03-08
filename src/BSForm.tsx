@@ -31,6 +31,9 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
         setFormErrors, 
         ...other } = props;
 
+    if (field.type === 'time') {
+        (other as any).step = '60';
+    }
     const renderer = field.valueRenderer || (x => x);
     let renderValue = renderer(value);
 
