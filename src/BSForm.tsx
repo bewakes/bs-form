@@ -20,20 +20,22 @@ type FormProps<T> = {
 };
 
 function WrappedInput<T> (props: WrappedInputProps<T>) {
-    const { 
-        name, 
-        field, 
-        value, 
-        formValues, 
-        formErrors, 
-        onChange, 
-        setFormValues, 
-        setFormErrors, 
-        ...other } = props;
+    const {
+        name,
+        field,
+        value,
+        formValues,
+        formErrors,
+        onChange,
+        setFormValues,
+        setFormErrors,
+        ...other
+    } = props;
 
     if (field.type === 'time') {
         (other as any).step = '60';
     }
+    const isDisabled = field.disableWhen && field.disableWhen(formValues);
     const renderer = field.valueRenderer || (x => x);
     let renderValue = renderer(value);
 
@@ -81,6 +83,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                     type="select"
                     invalid={!!(formErrors && formErrors[name])}
                     onChange={onChange}
+                    disabled={isDisabled}
                     {...other}
                 >
                     {(field.options || []).map((x) => (
@@ -101,6 +104,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                         invalid={!!(formErrors && formErrors[name])}
                         checked={renderValue}
                         onChange={onChange}
+                        disabled={isDisabled}
                         {...other}
                     />{' '}
                     {field.label}
@@ -163,6 +167,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                     multiple
                     accept={field.allowedFileExtensions || '*'}
                     onChange={onChange}
+                    disabled={isDisabled}
                     {...other}
                     style={{ display: 'none' }}
                     id="uploadFile"
@@ -231,6 +236,7 @@ function WrappedInput<T> (props: WrappedInputProps<T>) {
                 type={field.type}
                 placeholder={field.placeholder}
                 invalid={!!(formErrors && formErrors[name])}
+                disabled={isDisabled}
                 onChange={onChange}
                 {...other}
             />
